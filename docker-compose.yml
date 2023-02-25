@@ -3,12 +3,12 @@ version: '3.4'
 services:
   order-service:
     ports:
-      - "5001-5002:80"
+      - "5085-5086:80"
     build:
-      context: ./src/Ozon.Route256.Five.OrderService/
+      context: src/Ozon.Route256.Five.OrderService/
       dockerfile: Dockerfile
-    #deploy:
-    #  replicas: 2    
+    deploy:
+      replicas: 2    
     restart: unless-stopped
     depends_on:
       - order-database

@@ -7,14 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["src/Ozon.Route256.Five.OrderService/Ozon.Route256.Five.OrderService.csproj", "Ozon.Route256.Five.OrderService/"]
+COPY ["Ozon.Route256.Five.OrderService.csproj", "src/Ozon.Route256.Five.OrderService/"]
 RUN dotnet restore "src/Ozon.Route256.Five.OrderService/Ozon.Route256.Five.OrderService.csproj"
-COPY . .
+
 WORKDIR "/src/Ozon.Route256.Five.OrderService"
+COPY . .
+
 RUN dotnet build "Ozon.Route256.Five.OrderService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Ozon.Route256.Five.OrderService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Ozon.Route256.Five.OrderService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
