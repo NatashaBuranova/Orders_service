@@ -6,9 +6,10 @@
     <ProjectGuid>f4d6131b-89c5-457e-8ac2-4f86e9aa7e85</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>ozon.route256.five.orderservice</DockerServiceName>
+    <DockerServiceName>order-service</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".gitlab-ci.yml" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>

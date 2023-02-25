@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Five.OrderService", "Ozon.Route256.Five.OrderService\Ozon.Route256.Five.OrderService.csproj", "{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Five.OrderService", "src\Ozon.Route256.Five.OrderService\Ozon.Route256.Five.OrderService.csproj", "{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F4D6131B-89C5-457E-8AC2-4F86E9AA7E85}"
 EndProject
