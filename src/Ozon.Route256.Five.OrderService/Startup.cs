@@ -1,4 +1,6 @@
-﻿namespace Ozon.Route256.Five.OrderService;
+﻿using Ozon.Route256.Five.OrderService.Midlewares;
+
+namespace Ozon.Route256.Five.OrderService;
 
 public class Startup
 {
@@ -10,7 +12,9 @@ public class Startup
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {              
+    {
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
         app.UseRouting();
 
         app.UseAuthorization();
