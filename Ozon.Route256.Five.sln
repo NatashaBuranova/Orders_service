@@ -5,6 +5,15 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Five.OrderService", "src\Ozon.Route256.Five.OrderService\Ozon.Route256.Five.OrderService.csproj", "{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{0110F962-814E-42EC-A715-C770D5137BA8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitlab-ci.yml = .gitlab-ci.yml
+		docker-compose.yml = docker-compose.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4B4BBE96-B9B5-4C72-8D6D-AECBB0BF3015}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,13 +24,12 @@ Global
 		{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4D6131B-89C5-457E-8AC2-4F86E9AA7E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4D6131B-89C5-457E-8AC2-4F86E9AA7E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4D6131B-89C5-457E-8AC2-4F86E9AA7E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4D6131B-89C5-457E-8AC2-4F86E9AA7E85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033} = {4B4BBE96-B9B5-4C72-8D6D-AECBB0BF3015}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03AA0CCA-611E-4856-A3CE-70D1399201C0}
