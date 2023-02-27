@@ -1,0 +1,103 @@
+version: '3.4'
+
+services:
+  order-service:
+    ports:
+      - "5085-5086:80"
+    build:
+      context: src/Ozon.Route256.Five.OrderService/
+      dockerfile: Dockerfile
+    deploy:
+      replicas: 2    
+    restart: unless-stopped
+    depends_on:
+      - order-database
+      - kafka
+
+  customer-service:
+    image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/customer-service:latest
+    ports:
+       - "5082:80"
+    restart: unless-stopped
+    depends_on:
+      - customer-database
+   
+  service-discovery:
+    image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/service-discovery:latest
+    ports:
+      - "5081:80"
+    restart: unless-stopped 
+
+  logistics-simulator:
+    image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/logistics-simulator:latest
+    ports:
+      - "5083:80"
+    restart: unless-stopped
+    depends_on:
+      - kafka
+
+  orders-generator:
+    image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/orders-generator:latest
+    ports:
+      - "5084:80"
+    restart: unless-stopped
+    depends_on:
+      - kafka
+
+  customer-database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=customers_db
+    restart: always
+
+  order-database:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=orders_db
+    restart: always
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "6432:8080"
+
+  zookeeper:
+    image: zookeeper:latest
+    ports:
+      - "2181:2181"
+    restart: always
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+    restart: always
+    depends_on:
+      - zookeeper 
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    restart: always
