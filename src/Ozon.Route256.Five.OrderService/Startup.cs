@@ -1,7 +1,6 @@
-﻿using Grpc.Net.ClientFactory;
-using Ozon.Route256.Five.OrderService.ClientBalancing;
+﻿using Ozon.Route256.Five.OrderService.ClientBalancing;
+using Ozon.Route256.Five.OrderService.GrpsServices;
 using Ozon.Route256.Five.OrderService.Midlewares;
-using InterceptorRegistration = Grpc.Net.ClientFactory.InterceptorRegistration;
 
 namespace Ozon.Route256.Five.OrderService;
 
@@ -17,21 +16,21 @@ public class Startup
         services.AddGrpcReflection();
 
         services.AddSingleton<IDbStore, DbStore>();
-        services.AddHostedService<SdConsumerHostedService>();
-        services.AddGrpcClient<SdService.SdServiceClient>(
-            options =>
-            {
-                options.Address = new Uri("http://localhost:5080");
-                options.InterceptorRegistrations.Add(
-                    new InterceptorRegistration(
-                        InterceptorScope.Client,
-                        sp =>
-                        {
-                            var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+        //services.AddHostedService<SdConsumerHostedService>();
+        //services.AddGrpcClient<SdService.SdServiceClient>(
+        //    options =>
+        //    {
+        //        options.Address = new Uri("http://localhost:5081");
+        //        options.InterceptorRegistrations.Add(
+        //            new InterceptorRegistration(
+        //                InterceptorScope.Client,
+        //                sp =>
+        //                {
+        //                    var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
 
-                            return new LoggerInterceptor(loggerFactory.CreateLogger<LoggerInterceptor>());
-                        }));
-            });
+        //                    return new LoggerInterceptor(loggerFactory.CreateLogger<LoggerInterceptor>());
+        //                }));
+        //    });
 
     }
 
@@ -46,6 +45,9 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            endpoints.MapGrpcService<OrdersService>();
+            endpoints.MapGrpcReflectionService();
+
         });
 
         if (env.IsDevelopment())
@@ -54,5 +56,4 @@ public class Startup
             app.UseSwaggerUI();
         }
     }
-
 }

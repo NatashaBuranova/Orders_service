@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\Orders.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Grpc.Core.Api" Version="2.51.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="NLog" Version="5.1.2" />
@@ -26,7 +30,7 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\sd.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\Orders.proto" GrpcServices="Service" />
   </ItemGroup>
-
 
 </Project>

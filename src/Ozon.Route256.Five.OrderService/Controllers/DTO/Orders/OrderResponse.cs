@@ -1,6 +1,4 @@
-﻿using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
-
-namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
+﻿namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
 
 public record OrderResponse
 {
@@ -10,10 +8,25 @@ public record OrderResponse
     public long TotalWeight { get; set; }
     public DateTime DateCreate { get; set; }
     public int Status { get; set; }
-    public string DeliveryAddress { get; set; } = "";
+    public Adress DeliveryAddress { get; set; } = new Adress();
     public long Telephone { get; set; }
-    public ClientResponse Client { get; set; } = new ClientResponse();
+    public Client Client { get; set; } = new Client();
 }
 
+public record Client
+{
+    public string? LastName { get; set; }
+    public string? FirstName { get; set; }
+}
 
+public record Adress
+{
+    public string? Region { get; set; }
+    public string? City { get; set; }
+    public string? Street { get; set; }
+    public string? Building { get; set; }
+    public string? Apartment { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+}
 
