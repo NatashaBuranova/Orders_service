@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4B4BBE96-B9B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AD5FB6B5-6542-4043-B144-EA6D50968947}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonRoute256.Five.OrderService.Tests", "tests\OzonRoute256.Five.OrderService.Tests\OzonRoute256.Five.OrderService.Tests.csproj", "{FF138ECB-32FA-456E-8E4A-86CC47CA2363}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Five.OrderService.Tests", "tests\Ozon.Route256.Five.OrderService.Tests\Ozon.Route256.Five.OrderService.Tests.csproj", "{FF138ECB-32FA-456E-8E4A-86CC47CA2363}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
