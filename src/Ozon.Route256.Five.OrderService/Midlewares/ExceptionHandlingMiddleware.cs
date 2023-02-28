@@ -1,5 +1,4 @@
-﻿using NLog;
-using Ozon.Route256.Five.OrderService.DTO;
+﻿using Ozon.Route256.Five.OrderService.DTO;
 using System.Net;
 
 namespace Ozon.Route256.Five.OrderService.Midlewares;
@@ -7,11 +6,12 @@ namespace Ozon.Route256.Five.OrderService.Midlewares;
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next)
+    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -22,7 +22,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.Error(ex);
+            _logger.LogError(ex.Message);
             await HandleExceptionAsync(httpContext, ex);
         }
     }

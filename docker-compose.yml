@@ -24,6 +24,10 @@ services:
    
   service-discovery:
     image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/service-discovery:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ROUTE256_DB_STATE=cluster:0-9:db1:1543;cluster:10-19:db2:1543;cluster1:0:db3:1543 
+      - ROUTE256_UPDATE_TIMEOUT=10
     ports:
       - "5081:80"
     restart: unless-stopped 
@@ -53,7 +57,7 @@ services:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=customers_db
     restart: always
-
+  
   order-database:
     image: postgres:latest
     ports:
@@ -62,6 +66,36 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=orders_db
+    restart: always
+
+  db1:
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=db1_db
+    restart: always
+
+  db2:
+    image: postgres:latest
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=db2_db
+    restart: always
+
+  db3:
+    image: postgres:latest
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=db3_db
     restart: always
 
   adminer:
