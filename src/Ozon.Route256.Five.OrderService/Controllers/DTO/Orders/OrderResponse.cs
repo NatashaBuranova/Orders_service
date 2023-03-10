@@ -1,4 +1,7 @@
-﻿namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
+﻿using Ozon.Route256.Five.OrderService.Models;
+using Ozon.Route256.Five.OrderService.Models.Enums;
+
+namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
 
 public record OrderResponse
 {
@@ -6,10 +9,10 @@ public record OrderResponse
     public int CountProduct { get; set; }
     public long TotalSumm { get; set; }
     public long TotalWeight { get; set; }
-    public DateTime DateCreate { get; set; }
-    public int Status { get; set; }
+    public DateTimeOffset DateCreate { get; set; }
+    public OrderState Status { get; set; }
     public Adress DeliveryAddress { get; set; } = new Adress();
-    public long Telephone { get; set; }
+    public string Telephone { get; set; }
     public Client Client { get; set; } = new Client();
 }
 
@@ -19,14 +22,4 @@ public record Client
     public string? FirstName { get; set; }
 }
 
-public record Adress
-{
-    public string? Region { get; set; }
-    public string? City { get; set; }
-    public string? Street { get; set; }
-    public string? Building { get; set; }
-    public string? Apartment { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-}
 

@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 
 service Orders
 {
-  rpc GetOrderById(OrderByIdRequest) returns (Order);
+  rpc GetOrderById(OrderByIdRequest) returns (OrderByIdResponse);
 }
 
 message OrderByIdRequest
@@ -13,10 +13,10 @@ message OrderByIdRequest
   int64 id = 1;
 }
 
-message Order
+message OrderByIdResponse
 {
   int64 id = 1;
-  string count_product  = 2;
+  int32 count_product  = 2;
   int64 total_sum = 3;
   int64 total_weight = 4;
   int32 type = 5;
