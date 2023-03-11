@@ -17,35 +17,7 @@ public class GetClientServices : IGetClientServices
     public async Task<List<ClientResponse>> GetClientsAsync(CancellationToken token)
     {
         var result = (await _client.GetCustomersAsync(request: new Empty(), cancellationToken: token))
-            .Customers.Select(x => new ClientResponse()
-            {
-                Id = x.Id,
-                LastName = x.LastName,
-                FirstName = x.FirstName,
-                Email = x.Email,
-                Telephone = x.MobileNumber,
-                DefaultAdresses = x.Addresses.Select(x => new AdressResponse()
-                {
-                    City = x.City,
-                    Region = x.Region,
-                    Apartment = x.Apartment,
-                    Building = x.Building,
-                    Latitude = x.Latitude,
-                    Longitude = x.Longitude,
-                    Street = x.Street
-                })
-            .ToList(),
-                DefaultAdress = new AdressResponse()
-                {
-                    City = x.DefaultAddress.City,
-                    Region = x.DefaultAddress.Region,
-                    Apartment = x.DefaultAddress.Apartment,
-                    Building = x.DefaultAddress.Building,
-                    Latitude = x.DefaultAddress.Latitude,
-                    Longitude = x.DefaultAddress.Longitude,
-                    Street = x.DefaultAddress.Street
-                }
-            })
+            .Customers.Select(x => GetClientResponse(x))
             .ToList();
 
         return result;
@@ -56,34 +28,35 @@ public class GetClientServices : IGetClientServices
         var result = (await _client.GetCustomerAsync(
             new Customers.GetCustomerByIdRequest { Id = customerId }, cancellationToken: token));
 
+        return GetClientResponse(result);
+    }
+
+    private static ClientResponse GetClientResponse(Customers.Customer customer)
+    {
         return new ClientResponse()
         {
-            Id = result.Id,
-            LastName = result.LastName,
-            FirstName = result.FirstName,
-            Email = result.Email,
-            Telephone = result.MobileNumber,
-            DefaultAdresses = result.Addresses.Select(x => new AdressResponse()
-            {
-                City = x.City,
-                Region = x.Region,
-                Apartment = x.Apartment,
-                Building = x.Building,
-                Latitude = x.Latitude,
-                Longitude = x.Longitude,
-                Street = x.Street
-            })
+            Id = customer.Id,
+            LastName = customer.LastName,
+            FirstName = customer.FirstName,
+            Email = customer.Email,
+            Telephone = customer.MobileNumber,
+            DefaultAdresses = customer.Addresses.Select(x => GetAdressResponse(x))
             .ToList(),
-            DefaultAdress = new AdressResponse()
-            {
-                City = result.DefaultAddress.City,
-                Region = result.DefaultAddress.Region,
-                Apartment = result.DefaultAddress.Apartment,
-                Building = result.DefaultAddress.Building,
-                Latitude = result.DefaultAddress.Latitude,
-                Longitude = result.DefaultAddress.Longitude,
-                Street = result.DefaultAddress.Street
-            }
+            DefaultAdress = GetAdressResponse(customer.DefaultAddress)
+        };
+    }
+
+    private static AdressResponse GetAdressResponse(Customers.Address address)
+    {
+        return new AdressResponse()
+        {
+            City = address.City,
+            Region = address.Region,
+            Apartment = address.Apartment,
+            Building = address.Building,
+            Latitude = address.Latitude,
+            Longitude = address.Longitude,
+            Street = address.Street
         };
     }
 }

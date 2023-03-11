@@ -2,8 +2,6 @@
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
 using Ozon.Route256.Five.OrderService.Models;
 using System.Collections.Concurrent;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace Ozon.Route256.Five.OrderService.Repositories.ImMemoryImp;
 
@@ -83,7 +81,8 @@ public class OrderInMemoryRepository : IOrderRepository
         return Task.FromResult(orders.Skip(skip).Take(filters.OnPage).ToArray());
     }
 
-    public Task<Order[]> GetManyAsync(Func<Order, bool> where, CancellationToken token) {
+    public Task<Order[]> GetManyAsync(Func<Order, bool> where, CancellationToken token)
+    {
 
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
