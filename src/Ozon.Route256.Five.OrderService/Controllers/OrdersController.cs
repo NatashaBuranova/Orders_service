@@ -84,7 +84,7 @@ public class OrdersController : BaseController
                 Status = order.State,
                 DateCreate = order.DateCreate,
                 CountProduct = order.CountProduct,
-                Telephone = client.MobileNumber,
+                Telephone = client.Telephone,
                 TotalSumm = order.TotalSumm,
                 TotalWeight = order.TotalWeight,
                 DeliveryAddress = order.DeliveryAddress,
@@ -132,8 +132,7 @@ public class OrdersController : BaseController
                 CountOrders = region.Count(),
                 TotalWeight = totalWeight,
                 TotalSumOrders = totalSum,
-                CountClients = clients.Customers
-                               .Where(x => x.DefaultAddress.Region == region.First().DeliveryAddress.Region.Name).Count()
+                CountClients = clients.Where(x => x.DefaultAdress.Region == region.First().DeliveryAddress.Region.Name).Count()
             });
         }
 
@@ -161,7 +160,7 @@ public class OrdersController : BaseController
                 Status = order.State,
                 DateCreate = order.DateCreate,
                 CountProduct = order.CountProduct,
-                Telephone = client.MobileNumber,
+                Telephone = client.Telephone,
                 TotalSumm = order.TotalSumm,
                 TotalWeight = order.TotalWeight,
                 DeliveryAddress = order.DeliveryAddress,
