@@ -21,7 +21,7 @@ public class GetClientServices : IGetClientServices
 
     public async Task<Customers.Customer> GetClientAsync(int customerId, CancellationToken token)
     {
-        var result = await _client.GetCustomerAsync(new Customers.GetCustomerByIdRequest { Id = customerId}, cancellationToken: token);
+        var result = await _client.GetCustomerAsync(new Customers.GetCustomerByIdRequest { Id = customerId }, cancellationToken: token);
 
         return result;
     }

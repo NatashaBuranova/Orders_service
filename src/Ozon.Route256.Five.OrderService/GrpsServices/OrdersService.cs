@@ -47,10 +47,10 @@ public class OrdersService : Orders.OrdersBase
             CountProduct = order.CountProduct,
             Region = order.DeliveryAddress.Region.Name,
             Status = (int)order.State,
-            Telephone= client.MobileNumber,
+            Telephone = client.MobileNumber,
             TotalSum = order.TotalSumm,
-            TotalWeight= order.TotalWeight,
-            Type= (int)order.Type
+            TotalWeight = order.TotalWeight,
+            Type = (int)order.Type
         };
     }
 }
