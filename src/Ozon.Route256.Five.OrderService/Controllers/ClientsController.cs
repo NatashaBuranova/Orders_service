@@ -11,7 +11,6 @@ public class ClientsController : BaseController
     public async Task<IActionResult> GetClientsListAsync()
     {
         await Task.Yield();
-        var clients = new List<ClientResponse>() { };
-        return Ok(clients);
+        return Ok(Enumerable.Empty<ClientResponse>());
     }
 }

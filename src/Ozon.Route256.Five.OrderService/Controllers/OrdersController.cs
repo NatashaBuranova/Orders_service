@@ -5,10 +5,10 @@ namespace Ozon.Route256.Five.OrderService.Controllers;
 
 public class OrdersController : BaseController
 {
-    public OrdersController() {}
+    public OrdersController() { }
 
     [HttpGet]
-    public async Task<IActionResult> CanceledOrderByIdAsync(long id)
+    public async Task<IActionResult> CancelOrderByIdAsync(long id)
     {
         await Task.Yield();
         return NotFound($"Order with id: {id} not found");
@@ -21,30 +21,27 @@ public class OrdersController : BaseController
         return NotFound($"Order with id: {id} not found");
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersListWithFilters([FromQuery] OrdersListWithFiltersRequest request)
+    [HttpPost]
+    public async Task<IActionResult> GetOrdersListWithFiltersAsync([FromBody] OrdersListWithFiltersRequest request)
     {
         await Task.Yield();
 
-        var orders = new List<OrderResponse>();
-        return Ok(orders);
+        return Ok(Enumerable.Empty<OrderResponse>());
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersListInRegionsByTime(DateTime startPeriod, List<long> regionIds)
+    [HttpPost]
+    public async Task<IActionResult> GetOrdersListByRegionsAndDateTimeAsync([FromBody] OrdersListByRegionsAndDateTimeRequest request)
     {
         await Task.Yield();
 
-        var ordersinRegions = new List<OrdersInRegionResponse>();
-        return Ok(ordersinRegions);
+        return Ok(Enumerable.Empty<OrdersInRegionResponse>());
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersForClientByTime([FromQuery] OrdersForClientByTimeRequest request)
+    [HttpPost]
+    public async Task<IActionResult> GetOrdersForClientByTimeAsync([FromBody] OrdersForClientByTimeRequest request)
     {
         await Task.Yield();
 
-        var orders = new List<OrderResponse>();
-        return Ok(orders);
+        return Ok(Enumerable.Empty<OrderResponse>());
     }
 }
