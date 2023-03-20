@@ -1,21 +1,9 @@
-var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+using Ozon.Route256.Five.OrderService;
 
-var app = builder.Build();
+await Host
+    .CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(builder => { builder.UseStartup<Startup>(); })
+    .Build()
+    .RunAsync();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
