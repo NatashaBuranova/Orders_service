@@ -119,7 +119,7 @@ public class OrdersController : BaseController
 
         foreach (var region in regionsGrouping)
         {
-            long totalSum = 0;
+            double totalSum = 0;
             long totalWeight = 0;
 
             region.ToList().ForEach(x => { totalSum += x.TotalSumm; });

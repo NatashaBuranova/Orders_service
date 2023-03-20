@@ -21,7 +21,7 @@ message OrderByIdResponse
 {
   int64 id = 1;
   int32 count_product  = 2;
-  int64 total_sum = 3;
+  double total_sum = 3;
   int64 total_weight = 4;
   int32 type = 5;
   google.protobuf.Timestamp date_create = 6;

@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     environment:
       ROUTE256_Redis:ConnectionString: redis:6379,abortConnect=false
-      ROUTE256_Kafka:BootstrapServers: kafka-srv:9092
+      ROUTE256_Kafka:BootstrapServers: kafka:9092
     depends_on:
       - kafka
       - redis
@@ -52,6 +52,11 @@ services:
     ports:
       - "5084:80"
     restart: unless-stopped
+    environment:
+     ROUTE256_CUSTOMER_SERVICE: customer-service:5004,
+     ROUTE256_KAFKA_BROKERS: kafka:9092,
+     ROUTE256_ORDER_SOURCE: 1,
+     ROUTE256_ORDER_REQUEST_TOPIC: "pre_orders"
     depends_on:
       - kafka
 

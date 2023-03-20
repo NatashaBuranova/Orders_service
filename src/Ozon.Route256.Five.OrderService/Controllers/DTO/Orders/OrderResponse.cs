@@ -7,7 +7,7 @@ public class OrderResponse
 {
     public long Id { get; set; }
     public int CountProduct { get; set; }
-    public long TotalSumm { get; set; }
+    public double TotalSumm { get; set; }
     public long TotalWeight { get; set; }
     public DateTimeOffset DateCreate { get; set; }
     public OrderState Status { get; set; }

@@ -11,6 +11,11 @@ public interface IOrderRepository
     Task<Order?> FindAsync(long orderId, CancellationToken token);
 
     /// <summary>
+    ///  Создание заказа
+    /// </summary>
+    public Task InsertAsync(Order newOrder, CancellationToken token);
+
+    /// <summary>
     /// Обновление заказа
     /// </summary>
     Task UpdateAsync(Order order, CancellationToken token);
