@@ -13,12 +13,15 @@ services:
     depends_on:
       - order-database
       - kafka
+      - redis
 
   customer-service:
     image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/customer-service:latest
     ports:
        - "5004:80"
     restart: unless-stopped
+    environment:
+      ROUTE256_ConnectionStrings:SdUrl: http://service-discovery:80
     depends_on:
       - customer-database
    
@@ -37,8 +40,12 @@ services:
     ports:
       - "5080:80"
     restart: unless-stopped
+    environment:
+      ROUTE256_Redis:ConnectionString: redis:6379,abortConnect=false
+      ROUTE256_Kafka:BootstrapServers: kafka-srv:9092
     depends_on:
       - kafka
+      - redis
 
   orders-generator:
     image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/orders-generator:latest
@@ -135,3 +142,9 @@ services:
       - "14268:14268"
       - "9411:9411"
     restart: always
+
+  redis:
+    image: redis:alpine3.17
+    restart: always
+    ports:
+      - '6379:6379'

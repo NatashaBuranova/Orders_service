@@ -12,6 +12,14 @@ namespace Ozon.Route256.Five.OrderService;
 
 public class Startup
 {
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
@@ -55,6 +63,11 @@ public class Startup
 
         services.AddTransient<ICanceledOrderServices, CanceledOrderServices>();
         services.AddTransient<IGetClientServices, GetClientServices>();
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = _configuration.GetValue<string>("Redis:ConnectionString");
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
