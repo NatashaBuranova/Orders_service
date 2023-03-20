@@ -14,6 +14,7 @@ namespace Ozon.Route256.Five.OrderService.Tests.Controllers;
 public class OrdersControllerTests
 {
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
+    private readonly Mock<IClientRepository> _clientRepositoryMock = new();
     private readonly Mock<ICanceledOrderServices> _canceledOrderServicesMock = new();
     private readonly Mock<IRegionRepository> _regionRepositoryMock = new();
     private readonly Mock<IGetClientServices> _clientServicesMock = new();
@@ -26,7 +27,8 @@ public class OrdersControllerTests
             _orderRepositoryMock.Object,
             _canceledOrderServicesMock.Object,
             _regionRepositoryMock.Object,
-            _clientServicesMock.Object);
+            _clientServicesMock.Object,
+            _clientRepositoryMock.Object);
     }
 
     [Fact]
@@ -143,6 +145,8 @@ public class OrdersControllerTests
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token))
             .ReturnsAsync(true);
 
+        _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(true);
+
         _orderRepositoryMock.Setup(x => x.GetOrdersListWithFiltersByPageAsync(It.IsAny<OrdersListWithFiltersRequest>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Order[]
@@ -155,15 +159,14 @@ public class OrdersControllerTests
                     CountProduct = 2,
                     TotalSumm = 100,
                     TotalWeight = 2,
-                    ClientId = 1
+                    ClientId = 1,
+                    Client= new Models.Client()
+                    {
+                        Id=1,
+                        FirstName = "John",
+                        LastName = "Doe"
+                    }
                 }
-            });
-
-        _clientServicesMock.Setup(x => x.GetClientAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ClientResponse
-            {
-                FirstName = "John",
-                LastName = "Doe"
             });
 
         // Act
@@ -302,7 +305,8 @@ public class OrdersControllerTests
         // Arrange
         var request = new OrdersForClientByTimeRequest(1, DateTimeOffset.UtcNow, 10);
         var token = CancellationToken.None;
-        _clientServicesMock.Setup(x => x.GetClientAsync(request.ClientId, token)).ReturnsAsync((ClientResponse)null);
+
+        _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(false);
 
         // Act
         var result = await _ordersController.GetOrdersForClientByTimeAsync(request, token);
@@ -318,14 +322,15 @@ public class OrdersControllerTests
         // Arrange
         var request = new OrdersForClientByTimeRequest(1, DateTimeOffset.UtcNow, 10);
         var token = CancellationToken.None;
-        var client = new ClientResponse { Telephone = "1234567890", FirstName = "John", LastName = "Doe" };
+        var client = new Models.Client { Telephone = "1234567890", FirstName = "John", LastName = "Doe" };
         var orders = new[]
         {
-            new Order { Id = 1, State = OrderState.Delivered, DateCreate = DateTime.Now, CountProduct = 2, TotalSumm = 10, TotalWeight = 1, ClientId = 1 },
-            new Order { Id = 2, State = OrderState.SentToCustomer, DateCreate = DateTime.Now.AddDays(-1), CountProduct = 1, TotalSumm = 5, ClientId = 1 },
+            new Order { Id = 1, State = OrderState.Delivered, DateCreate = DateTime.Now, CountProduct = 2, TotalSumm = 10, TotalWeight = 1, ClientId = 1, Client = client },
+            new Order { Id = 2, State = OrderState.SentToCustomer, DateCreate = DateTime.Now.AddDays(-1), CountProduct = 1, TotalSumm = 5, ClientId = 1, Client = client }
         };
-        _clientServicesMock.Setup(x => x.GetClientAsync(request.ClientId, token)).ReturnsAsync(client);
+
         _orderRepositoryMock.Setup(x => x.GetManyAsync(It.IsAny<Func<Order, bool>>(), token)).ReturnsAsync(orders);
+        _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(true);
 
         // Act
         var result = await _ordersController.GetOrdersForClientByTimeAsync(request, token);

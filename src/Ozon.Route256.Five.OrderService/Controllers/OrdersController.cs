@@ -10,6 +10,7 @@ public class OrdersController : BaseController
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IRegionRepository _regionRepository;
+    private readonly IClientRepository _clientRepository;
     private readonly ICanceledOrderServices _canceledOrderServices;
     private readonly IGetClientServices _clientServices;
 
@@ -22,12 +23,14 @@ public class OrdersController : BaseController
     public OrdersController(IOrderRepository orderRepository,
         ICanceledOrderServices canceledOrderServices,
         IRegionRepository regionRepository,
-        IGetClientServices clientServices)
+        IGetClientServices clientServices,
+        IClientRepository clientRepository)
     {
         _orderRepository = orderRepository;
         _canceledOrderServices = canceledOrderServices;
         _regionRepository = regionRepository;
         _clientServices = clientServices;
+        _clientRepository = clientRepository;
     }
 
     [HttpGet]
@@ -76,7 +79,6 @@ public class OrdersController : BaseController
 
         foreach (var order in orders)
         {
-            var client = await _clientServices.GetClientAsync(order.ClientId, token);
 
             response.Add(new OrderResponse()
             {
@@ -84,14 +86,14 @@ public class OrdersController : BaseController
                 Status = order.State,
                 DateCreate = order.DateCreate,
                 CountProduct = order.CountProduct,
-                Telephone = client.Telephone,
+                Telephone = order.Client.Telephone,
                 TotalSumm = order.TotalSumm,
                 TotalWeight = order.TotalWeight,
                 DeliveryAddress = order.DeliveryAddress,
                 Client = new ClientName()
                 {
-                    FirstName = client.FirstName,
-                    LastName = client.LastName,
+                    FirstName = order.Client.FirstName,
+                    LastName = order.Client.LastName,
                 }
             });
         }
@@ -141,9 +143,8 @@ public class OrdersController : BaseController
     [HttpPost]
     public async Task<IActionResult> GetOrdersForClientByTimeAsync([FromBody] OrdersForClientByTimeRequest request, CancellationToken token)
     {
-        var client = await _clientServices.GetClientAsync(request.ClientId, token);
 
-        if (client == null)
+        if (! await _clientRepository.IsExistsAsync(request.ClientId, token))
             return NotFound($"Customer with id: {request.ClientId} not found");
 
         var orders = await _orderRepository.GetManyAsync(x => x.DateCreate >= request.StartPeriod && x.ClientId == request.ClientId, token);
@@ -159,14 +160,14 @@ public class OrdersController : BaseController
                 Status = order.State,
                 DateCreate = order.DateCreate,
                 CountProduct = order.CountProduct,
-                Telephone = client.Telephone,
+                Telephone = order.Client.Telephone,
                 TotalSumm = order.TotalSumm,
                 TotalWeight = order.TotalWeight,
                 DeliveryAddress = order.DeliveryAddress,
                 Client = new ClientName()
                 {
-                    FirstName = client.FirstName,
-                    LastName = client.LastName,
+                    FirstName = order.Client.FirstName,
+                    LastName = order.Client.LastName,
                 }
             });
         }

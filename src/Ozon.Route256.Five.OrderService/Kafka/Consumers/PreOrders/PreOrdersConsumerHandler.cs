@@ -40,7 +40,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
 
     private async Task<Order> GetNewOrderFromMessageAsync(PreOrderDto message, CancellationToken token)
     {
-        var consumer = await _clientServices.GetClientAsync(message.Customer.Id, token);
+        var client = await _clientServices.GetClientAsync(message.Customer.Id, token);
         var region = await _regionRepository.FindAsync(message.Customer.Address.Region, token);
 
         return new Order()
@@ -48,12 +48,13 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
             Id = message.Id,
             DateCreate = _dateTimeProvider.CurrentDateTimeOffsetUtc,
             Type = message.Source,
-            ClientId = consumer.Id,
+            ClientId = client.Id,
             Client = new Models.Client()
             {
-                Id = consumer.Id,
-                FirstName = consumer.FirstName,
-                LastName = consumer.LastName
+                Id = client.Id,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                Telephone = client.Telephone
             },
             Goods = message.Goods.Select(x => new Good()
             {

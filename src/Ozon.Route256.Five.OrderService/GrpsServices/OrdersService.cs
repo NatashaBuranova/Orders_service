@@ -8,12 +8,10 @@ namespace Ozon.Route256.Five.OrderService.GrpsServices;
 public class OrdersService : Orders.OrdersBase
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IGetClientServices _clientServices;
 
-    public OrdersService(IOrderRepository orderRepository, IGetClientServices clientServices)
+    public OrdersService(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
-        _clientServices = clientServices;
     }
 
     public override async Task<OrderByIdResponse> GetOrderById(OrderByIdRequest request, ServerCallContext context)
@@ -22,8 +20,6 @@ public class OrdersService : Orders.OrdersBase
 
         if (order == null)
             throw new RpcException(new Status(StatusCode.NotFound, $"Order {request.Id} not found"));
-
-        var client = await _clientServices.GetClientAsync(order.ClientId, context.CancellationToken);
 
         return new OrderByIdResponse()
         {
@@ -41,13 +37,13 @@ public class OrdersService : Orders.OrdersBase
             },
             Client = new Client()
             {
-                FirstName = client.FirstName,
-                LastName = client.LastName
+                FirstName = order.Client.FirstName,
+                LastName = order.Client.LastName
             },
             CountProduct = order.CountProduct,
             Region = order.DeliveryAddress.Region.Name,
             Status = (int)order.State,
-            Telephone = client.Telephone,
+            Telephone = order.Client.Telephone,
             TotalSum = order.TotalSumm,
             TotalWeight = order.TotalWeight,
             Type = (int)order.Type
