@@ -2,5 +2,8 @@
 
 public interface ICanceledOrderServices
 {
+    /// <summary>
+    /// Отмена заказа в симуляторе логистики
+    /// </summary>
     Task CanceledOrderInLogisticsSimulator(long orderId, CancellationToken token);
 }
