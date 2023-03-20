@@ -25,7 +25,7 @@ public class SendNewOrder : ISendNewOrder
         var distance = DistanceCalculator.CalculateDistance(new Point(order.DeliveryAddress.Latitude, order.DeliveryAddress.Latitude),
             new Point(order.DeliveryAddress.Region.StockLatitude, order.DeliveryAddress.Region.StockLongitude));
 
-        if (distance > 5000) return false;
+        if (distance > 5) return false;
 
         return true;
     }

@@ -35,7 +35,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
 
         await _orderRepository.InsertAsync(newOrder, token);
 
-        //await _sendNewOrder.SendValidOrder(newOrder, token);
+        await _sendNewOrder.SendValidOrder(newOrder, token);
     }
 
     private async Task<Order> GetNewOrderFromMessageAsync(PreOrderDto message, CancellationToken token)
