@@ -31,7 +31,7 @@ public class OrdersController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> CanceledOrderByIdAsync(long id, CancellationToken token)
+    public async Task<IActionResult> CancelOrderByIdAsync(long id, CancellationToken token)
     {
         var order = await _orderRepository.FindAsync(id, token);
 
@@ -60,8 +60,8 @@ public class OrdersController : BaseController
         return Ok(order.State);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersListWithFilters([FromQuery] OrdersListWithFiltersRequest request, CancellationToken token)
+    [HttpPost]
+    public async Task<IActionResult> GetOrdersListWithFiltersAsync([FromBody] OrdersListWithFiltersRequest request)
     {
         foreach (var regionId in request.RegionFilterIds)
         {
@@ -99,8 +99,8 @@ public class OrdersController : BaseController
         return Ok(response);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersListInRegionsByTime([FromQuery] OrdersListInRegionsByTimeRequest request, CancellationToken token)
+    [HttpPost]
+    public async Task<IActionResult> GetOrdersListInRegionsByTime([FromBody] OrdersListInRegionsByTimeRequest request, CancellationToken token)
     {
         foreach (var regionId in request.regionIds)
         {

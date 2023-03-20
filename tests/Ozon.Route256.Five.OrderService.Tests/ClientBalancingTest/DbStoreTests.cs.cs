@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Ozon.Route256.Five.OrderService.ClientBalancing;
 
 namespace OzonRoute256.Five.OrderService.Tests.ClientBalancingTest;
@@ -9,26 +8,28 @@ public class DbStoreTests
 
     public DbStoreTests()
     {
-        _dbStore = new DbStore();           
+        _dbStore = new DbStore();
     }
 
     [Fact]
     public async Task GetNextEndpointAsync_Successful()
     {
-        await _dbStore.UpdateEndpointsAsync(
-            new[]
+        //Arrange
+        var dbEndpoints = new[]
             {
             new DbEndpoint("testHost1", DbReplicaType.Master),
             new DbEndpoint("testHost2", DbReplicaType.Master),
-            });
-        
-        var result = await _dbStore.GetNextEndpointAsync();
-        result.HostAndPort.Should().Be("testHost1");
+            };
+        await _dbStore.UpdateEndpointsAsync(dbEndpoints);
 
-        result = await _dbStore.GetNextEndpointAsync();
-        result.HostAndPort.Should().Be("testHost2");
+        //Act
+        var resultFirst = await _dbStore.GetNextEndpointAsync();
+        var resultSecond = await _dbStore.GetNextEndpointAsync();
+        var resultThird = await _dbStore.GetNextEndpointAsync();
 
-        result = await _dbStore.GetNextEndpointAsync();
-        result.HostAndPort.Should().Be("testHost1");
+        //Assert
+        Assert.Equal(dbEndpoints[0].HostAndPort,resultFirst.HostAndPort);
+        Assert.Equal(dbEndpoints[1].HostAndPort, resultSecond.HostAndPort);
+        Assert.Equal(dbEndpoints[0].HostAndPort, resultThird.HostAndPort);
     }
 }

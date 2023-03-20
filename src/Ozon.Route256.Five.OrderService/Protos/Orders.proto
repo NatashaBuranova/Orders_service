@@ -2,17 +2,21 @@
 option csharp_namespace = "Ozon.Route256.Five.OrderService";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 service Orders
-{
+{ 
+  // Ручка для получения заказа по Id
   rpc GetOrderById(OrderByIdRequest) returns (OrderByIdResponse);
 }
 
+// Запрос получения заказа по Id
 message OrderByIdRequest
 {
   int64 id = 1;
 }
 
+// Информация о заказе
 message OrderByIdResponse
 {
   int64 id = 1;
@@ -28,19 +32,21 @@ message OrderByIdResponse
   string telephone = 11;
 }
 
+// Информация о клиенте
 message Client
 {
   string first_name = 1;
   string last_name = 2;
 }
 
+// Информация об адресе
 message Address
 {
   string region = 1;
   string city = 2;
   string street = 3;
   string building = 4;
-  string apartment = 5;
+  google.protobuf.StringValue apartment = 5;
   double latitude = 6;
   double longitude = 7;
 }

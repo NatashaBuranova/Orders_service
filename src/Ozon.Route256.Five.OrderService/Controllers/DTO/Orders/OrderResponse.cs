@@ -3,7 +3,7 @@ using Ozon.Route256.Five.OrderService.Models.Enums;
 
 namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
 
-public record OrderResponse
+public class OrderResponse
 {
     public long Id { get; set; }
     public int CountProduct { get; set; }
@@ -16,7 +16,7 @@ public record OrderResponse
     public Client Client { get; set; } = new Client();
 }
 
-public record Client
+public class Client
 {
     public string? LastName { get; set; }
     public string? FirstName { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
 
-public record ClientResponse
+public class ClientResponse
 {
     public int Id { get; set; }
     public string FirstName { get; set; }
