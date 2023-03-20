@@ -40,7 +40,7 @@ public class GetClientServices : IGetClientServices
             FirstName = customer.FirstName,
             Email = customer.Email,
             Telephone = customer.MobileNumber,
-            DefaultAdresses = customer.Addresses.Select(x => GetAdressResponse(x))
+            Adresses = customer.Addresses.Select(x => GetAdressResponse(x))
             .ToList(),
             DefaultAdress = GetAdressResponse(customer.DefaultAddress)
         };

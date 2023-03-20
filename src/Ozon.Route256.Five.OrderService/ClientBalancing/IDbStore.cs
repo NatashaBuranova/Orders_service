@@ -5,7 +5,6 @@ public interface IDbStore
     /// <summary>
     ///  Обновление конечных точек
     /// </summary>
-
     Task UpdateEndpointsAsync(IReadOnlyCollection<DbEndpoint> dbEndpoints);
 
     /// <summary>

@@ -8,7 +8,6 @@ using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Models.Enums;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Services;
-using System.Linq.Expressions;
 
 namespace Ozon.Route256.Five.OrderService.Tests.Controllers;
 
@@ -31,7 +30,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task CanceledOrderByIdAsync_WhenOrderNotFound_ReturnsNotFound()
+    public async Task CancelOrderByIdAsync_WhenOrderNotFound_ReturnsNotFound()
     {
         // Arrange
         const int NOT_EXIST_ID = 99;
@@ -39,7 +38,7 @@ public class OrdersControllerTests
         _orderRepositoryMock.Setup(x => x.FindAsync(NOT_EXIST_ID, token)).ReturnsAsync((Order)null);
 
         // Act
-        var result = await _ordersController.CanceledOrderByIdAsync(NOT_EXIST_ID, token);
+        var result = await _ordersController.CancelOrderByIdAsync(NOT_EXIST_ID, token);
 
         // Assert
         Assert.IsType<NotFoundObjectResult>(result);
@@ -47,7 +46,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task CanceledOrderByIdAsync_WhenOrderStateIsForbiddenToCancel_ReturnsBadRequest()
+    public async Task CancelOrderByIdAsync_WhenOrderStateIsForbiddenToCancel_ReturnsBadRequest()
     {
         // Arrange
         const int CANCELED_ORDER_ID = 1;
@@ -56,7 +55,7 @@ public class OrdersControllerTests
         _orderRepositoryMock.Setup(x => x.FindAsync(CANCELED_ORDER_ID, token)).ReturnsAsync(order);
 
         // Act
-        var result = await _ordersController.CanceledOrderByIdAsync(CANCELED_ORDER_ID, token);
+        var result = await _ordersController.CancelOrderByIdAsync(CANCELED_ORDER_ID, token);
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
@@ -65,7 +64,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task CanceledOrderByIdAsync_WhenOrderIsCanceled_ReturnsOk()
+    public async Task CancelOrderByIdAsync_WhenOrderIsCanceled_ReturnsOk()
     {
         // Arrange
         const int ORDER_ID = 1;
@@ -74,7 +73,7 @@ public class OrdersControllerTests
         _orderRepositoryMock.Setup(x => x.FindAsync(ORDER_ID, token)).ReturnsAsync(order);
 
         // Act
-        var result = await _ordersController.CanceledOrderByIdAsync(ORDER_ID, token);
+        var result = await _ordersController.CancelOrderByIdAsync(ORDER_ID, token);
 
         // Assert
         Assert.IsType<OkResult>(result);
@@ -117,7 +116,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetOrdersListWithFilters_WithNonExistingRegion_ReturnsNotFound()
+    public async Task GetOrdersListWithFiltersAsync_WithNonExistingRegion_ReturnsNotFound()
     {
         // Arrange
         var request = new OrdersListWithFiltersRequest(new List<long> { 1, 2, 3 }, true, null, 10);
@@ -127,7 +126,7 @@ public class OrdersControllerTests
             .ReturnsAsync(false);
 
         // Act
-        var result = await _ordersController.GetOrdersListWithFilters(request, token);
+        var result = await _ordersController.GetOrdersListWithFiltersAsync(request, token);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
@@ -135,7 +134,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetOrdersListWithFilters_WithFilters_ReturnsCorrectResponse()
+    public async Task GetOrdersListWithFiltersAsync_WithFilters_ReturnsCorrectResponse()
     {
         // Arrange
         var request = new OrdersListWithFiltersRequest(new List<long> { 1 }, true, null, 10);
@@ -168,7 +167,7 @@ public class OrdersControllerTests
             });
 
         // Act
-        var result = await _ordersController.GetOrdersListWithFilters(request, token);
+        var result = await _ordersController.GetOrdersListWithFiltersAsync(request, token);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -185,17 +184,17 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetOrdersListInRegionsByTime_WithNonExistingRegion_ReturnsNotFound()
+    public async Task GetOrdersListByRegionsAndDateTimeAsync_WithNonExistingRegion_ReturnsNotFound()
     {
         // Arrange
-        var request = new OrdersListInRegionsByTimeRequest(DateTimeOffset.Now.AddMonths(-2), new List<long> { 1, 2, 3 });
+        var request = new OrdersListByRegionsAndDateTimeRequest(DateTimeOffset.Now.AddMonths(-2), new List<long> { 1, 2, 3 });
         var token = new CancellationToken();
 
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act
-        var result = await _ordersController.GetOrdersListInRegionsByTime(request, token);
+        var result = await _ordersController.GetOrdersListByRegionsAndDateTimeAsync(request, token);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
@@ -203,10 +202,10 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetOrdersListInRegionsByTime_WithValidRequest_ReturnsOk()
+    public async Task GetOrdersListByRegionsAndDateTimeAsync_WithValidRequest_ReturnsOk()
     {
         // Arrange
-        var request = new OrdersListInRegionsByTimeRequest(DateTime.Now.AddDays(-1), new List<long> { 1, 2, 3 });
+        var request = new OrdersListByRegionsAndDateTimeRequest(DateTime.Now.AddDays(-1), new List<long> { 1, 2, 3 });
         var token = new CancellationToken();
 
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()))
@@ -279,7 +278,7 @@ public class OrdersControllerTests
             });
 
         // Act
-        var result = await _ordersController.GetOrdersListInRegionsByTime(request, token);
+        var result = await _ordersController.GetOrdersListByRegionsAndDateTimeAsync(request, token);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -298,7 +297,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetOrdersForClientByTime_ReturnsNotFound_WhenClientNotFound()
+    public async Task GetOrdersForClientByTimeAsync_ReturnsNotFound_WhenClientNotFound()
     {
         // Arrange
         var request = new OrdersForClientByTimeRequest(1, DateTimeOffset.UtcNow, 10);
@@ -306,7 +305,7 @@ public class OrdersControllerTests
         _clientServicesMock.Setup(x => x.GetClientAsync(request.ClientId, token)).ReturnsAsync((ClientResponse)null);
 
         // Act
-        var result = await _ordersController.GetOrdersForClientByTime(request, token);
+        var result = await _ordersController.GetOrdersForClientByTimeAsync(request, token);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
@@ -314,7 +313,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetOrdersForClientByTime_ReturnsOk_WithOrders()
+    public async Task GetOrdersForClientByTimeAsync_ReturnsOk_WithOrders()
     {
         // Arrange
         var request = new OrdersForClientByTimeRequest(1, DateTimeOffset.UtcNow, 10);
@@ -329,7 +328,7 @@ public class OrdersControllerTests
         _orderRepositoryMock.Setup(x => x.GetManyAsync(It.IsAny<Func<Order, bool>>(), token)).ReturnsAsync(orders);
 
         // Act
-        var result = await _ordersController.GetOrdersForClientByTime(request, token);
+        var result = await _ordersController.GetOrdersForClientByTimeAsync(request, token);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);

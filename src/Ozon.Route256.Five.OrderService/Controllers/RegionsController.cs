@@ -16,7 +16,11 @@ public class RegionsController : BaseController
     public async Task<IActionResult> GetRegionsListAsync(CancellationToken token)
     {
         var regions = (await _regionRepository.GetAllAsync(token))
-            .Select(x => new RegionResponse(x.Id, x.Name))
+            .Select(x => new RegionResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+            })
             .ToArray();
 
         return Ok(regions);

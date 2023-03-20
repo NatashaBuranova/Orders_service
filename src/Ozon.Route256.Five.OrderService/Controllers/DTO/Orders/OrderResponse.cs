@@ -11,12 +11,12 @@ public class OrderResponse
     public long TotalWeight { get; set; }
     public DateTimeOffset DateCreate { get; set; }
     public OrderState Status { get; set; }
-    public Adress DeliveryAddress { get; set; } = new Adress();
-    public string Telephone { get; set; }
-    public Client Client { get; set; } = new Client();
+    public Adress DeliveryAddress { get; set; }
+    public string? Telephone { get; set; }
+    public ClientName Client { get; set; }
 }
 
-public class Client
+public class ClientName
 {
     public string? LastName { get; set; }
     public string? FirstName { get; set; }

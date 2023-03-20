@@ -61,7 +61,7 @@ public class OrdersController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetOrdersListWithFiltersAsync([FromBody] OrdersListWithFiltersRequest request)
+    public async Task<IActionResult> GetOrdersListWithFiltersAsync([FromBody] OrdersListWithFiltersRequest request, CancellationToken token)
     {
         foreach (var regionId in request.RegionFilterIds)
         {
@@ -88,7 +88,7 @@ public class OrdersController : BaseController
                 TotalSumm = order.TotalSumm,
                 TotalWeight = order.TotalWeight,
                 DeliveryAddress = order.DeliveryAddress,
-                Client = new DTO.Orders.Client()
+                Client = new ClientName()
                 {
                     FirstName = client.FirstName,
                     LastName = client.LastName,
@@ -100,14 +100,13 @@ public class OrdersController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetOrdersListInRegionsByTime([FromBody] OrdersListInRegionsByTimeRequest request, CancellationToken token)
+    public async Task<IActionResult> GetOrdersListByRegionsAndDateTimeAsync([FromBody] OrdersListByRegionsAndDateTimeRequest request, CancellationToken token)
     {
         foreach (var regionId in request.regionIds)
         {
             if (!await _regionRepository.IsExistsAsync(regionId, token))
-            {
                 return NotFound($"Region with id: {regionId} not found");
-            };
+
         }
 
         var orders = await _orderRepository.GetManyAsync(x => x.DateCreate >= request.startPeriod &&
@@ -139,8 +138,8 @@ public class OrdersController : BaseController
         return Ok(ordersinRegions);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetOrdersForClientByTime([FromQuery] OrdersForClientByTimeRequest request, CancellationToken token)
+    [HttpPost]
+    public async Task<IActionResult> GetOrdersForClientByTimeAsync([FromBody] OrdersForClientByTimeRequest request, CancellationToken token)
     {
         var client = await _clientServices.GetClientAsync(request.ClientId, token);
 
@@ -164,7 +163,7 @@ public class OrdersController : BaseController
                 TotalSumm = order.TotalSumm,
                 TotalWeight = order.TotalWeight,
                 DeliveryAddress = order.DeliveryAddress,
-                Client = new DTO.Orders.Client()
+                Client = new ClientName()
                 {
                     FirstName = client.FirstName,
                     LastName = client.LastName,
