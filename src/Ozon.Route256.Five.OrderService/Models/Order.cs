@@ -12,8 +12,9 @@ public class Order
     public DateTimeOffset DateUpdate { get; set; } 
     public OrderState State { get; set; }
     public OrderType Type { get; set; }
-    public Adress DeliveryAddress { get; set; } = new();
-    public int ClientId { get; set; }
+    public Adress DeliveryAddress { get; set; } 
     public Client Client { get; set; }
-    public List<Good> Goods { get; set; } = new();
+    public int ClientId { get; set; }
+    public Region Region { get; set; }
+    public long RegionId { get; set; }
 }

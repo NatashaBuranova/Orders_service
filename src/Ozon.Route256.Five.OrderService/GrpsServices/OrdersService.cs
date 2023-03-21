@@ -1,7 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Ozon.Route256.Five.OrderService.Repositories;
-using Ozon.Route256.Five.OrderService.Services;
 
 namespace Ozon.Route256.Five.OrderService.GrpsServices;
 
@@ -27,7 +26,7 @@ public class OrdersService : Orders.OrdersBase
             DateCreate = order.DateCreate.ToTimestamp(),
             DeliveryAddress = new Address()
             {
-                Region = order.DeliveryAddress.Region.Name,
+                Region = order.DeliveryAddress.Region,
                 Street = order.DeliveryAddress.Street,
                 Apartment = order.DeliveryAddress.Apartment,
                 City = order.DeliveryAddress.City,
@@ -41,7 +40,7 @@ public class OrdersService : Orders.OrdersBase
                 LastName = order.Client.LastName
             },
             CountProduct = order.CountProduct,
-            Region = order.DeliveryAddress.Region.Name,
+            Region = order.DeliveryAddress.Region,
             Status = (int)order.State,
             Telephone = order.Client.Telephone,
             TotalSum = order.TotalSumm,

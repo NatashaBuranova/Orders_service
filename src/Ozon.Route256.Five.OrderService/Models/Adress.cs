@@ -2,8 +2,7 @@
 
 public class Adress
 {
-    public long RegionId { get; set; }
-    public Region Region { get; set; }
+    public string Region { get; set; }
     public string? City { get; set; }
     public string? Street { get; set; }
     public string? Building { get; set; }

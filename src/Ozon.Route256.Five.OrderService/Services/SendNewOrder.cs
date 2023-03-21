@@ -23,7 +23,7 @@ public class SendNewOrder : ISendNewOrder
     private static bool IsOrderValid(Order order)
     {
         var distance = DistanceCalculator.CalculateDistance(new Point(order.DeliveryAddress.Latitude, order.DeliveryAddress.Latitude),
-            new Point(order.DeliveryAddress.Region.StockLatitude, order.DeliveryAddress.Region.StockLongitude));
+            new Point(order.Region.StockLatitude, order.Region.StockLongitude));
 
         if (distance > 5) return false;
 

@@ -56,21 +56,11 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
                 LastName = client.LastName,
                 Telephone = client.Telephone
             },
-            Goods = message.Goods.Select(x => new Good()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Price = x.Price,
-                Quantity = x.Quantity,
-                Weight = x.Weight,
-            })
-            .ToList(),
             CountProduct = message.Goods.Count,
             State = OrderState.Created,
             DeliveryAddress = new Adress()
             {
-                Region = region,
-                RegionId = region.Id,
+                Region = message.Customer.Address.Region,
                 Apartment = message.Customer.Address.Apartment,
                 Building = message.Customer.Address.Building,
                 City = message.Customer.Address.City,
@@ -80,6 +70,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
             },
             TotalSumm = message.Goods.Select(x => x.Price).Sum(),
             TotalWeight = message.Goods.Select(x => x.Weight).Sum(),
+            RegionId = region.Id,
         };
     }
 }

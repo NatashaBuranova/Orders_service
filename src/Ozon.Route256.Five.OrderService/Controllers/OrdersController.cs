@@ -112,12 +112,11 @@ public class OrdersController : BaseController
         }
 
         var orders = await _orderRepository.GetManyAsync(x => x.DateCreate >= request.startPeriod &&
-                                                   request.regionIds.Count > 0 && request.regionIds.Contains(x.DeliveryAddress.RegionId),
+                                                   request.regionIds.Count > 0 && request.regionIds.Contains(x.RegionId),
                                                    token);
 
-        var regionsGrouping = orders.GroupBy(x => x.DeliveryAddress.RegionId);
+        var regionsGrouping = orders.GroupBy(x => x.RegionId);
         var ordersinRegions = new List<OrdersInRegionResponse>();
-        var clients = await _clientServices.GetClientsAsync(token);
 
         foreach (var region in regionsGrouping)
         {
@@ -129,11 +128,11 @@ public class OrdersController : BaseController
 
             ordersinRegions.Add(new OrdersInRegionResponse()
             {
-                RegionName = region.First().DeliveryAddress.Region.Name,
+                RegionName = region.First().DeliveryAddress.Region,
                 CountOrders = region.Count(),
                 TotalWeight = totalWeight,
                 TotalSumOrders = totalSum,
-                CountClients = clients.Where(x => x.DefaultAdress.Region == region.First().DeliveryAddress.Region.Name).Count()
+                CountClients = region.Select(x=>x.ClientId).Distinct().Count(),
             });
         }
 

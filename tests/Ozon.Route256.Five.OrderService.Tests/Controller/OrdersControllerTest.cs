@@ -221,62 +221,37 @@ public class OrdersControllerTests
                 {
                     Id = 1,
                     State = OrderState.Created,
-                    DeliveryAddress = new Adress
-                    {
-                        Region = new Region
+                    TotalSumm = 100,
+                    TotalWeight = 10,
+                    Region = new Region
                         {
                             Id = 1,
                             Name = "Region 1"
                         },
-                        RegionId = 1,
+                    DeliveryAddress= new Adress()
+                    {
+                        Region="Region 1"
                     },
-                    TotalSumm = 100,
-                    TotalWeight = 10
+                    RegionId = 1,
+                    ClientId = 2,
                 },
                 new Order
                 {
                     Id = 2,
                     State = OrderState.Created,
-                    DeliveryAddress = new Adress
-                    {
-                        Region = new Region
+                    TotalSumm = 200,
+                    TotalWeight = 20,
+                    Region = new Region
                         {
                             Id = 2,
                             Name = "Region 2"
                         },
-                        RegionId = 2,
+                    DeliveryAddress= new Adress()
+                    {
+                        Region="Region 2"
                     },
-                    TotalSumm = 200,
-                    TotalWeight = 20
-                }
-            });
-
-        _clientServicesMock.Setup(x => x.GetClientsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<ClientResponse>
-            {
-                new ClientResponse
-                {
-                    Id = 1,
-                    DefaultAdress = new AdressResponse
-                    {
-                        Region = "Region 1"
-                    }
-                },
-                new ClientResponse
-                {
-                    Id = 2,
-                    DefaultAdress = new AdressResponse
-                    {
-                        Region = "Region 1"
-                    }
-                },
-                new ClientResponse
-                {
-                    Id = 3,
-                    DefaultAdress = new AdressResponse
-                    {
-                        Region = "Region 2"
-                    }
+                    RegionId = 2,
+                    ClientId = 4
                 }
             });
 
@@ -289,7 +264,7 @@ public class OrdersControllerTests
         Assert.Equal(2, ordersInRegions.Count);
         Assert.Equal("Region 1", ordersInRegions[0].RegionName);
         Assert.Equal(1, ordersInRegions[0].CountOrders);
-        Assert.Equal(2, ordersInRegions[0].CountClients);
+        Assert.Equal(1, ordersInRegions[0].CountClients);
         Assert.Equal(100, ordersInRegions[0].TotalSumOrders);
         Assert.Equal(10, ordersInRegions[0].TotalWeight);
         Assert.Equal("Region 2", ordersInRegions[1].RegionName);

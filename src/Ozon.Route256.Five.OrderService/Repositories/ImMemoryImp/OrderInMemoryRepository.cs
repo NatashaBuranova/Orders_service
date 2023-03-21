@@ -20,9 +20,10 @@ public class OrderInMemoryRepository : IOrderRepository
             DateCreate = Faker.Date.Past(1),
             State = Models.Enums.OrderState.Created,
             Type = Models.Enums.OrderType.Mobile,
+            RegionId = Faker.Random.Int(1, 3),
             DeliveryAddress = new Adress()
             {
-                RegionId = Faker.Random.Int(1, 3),
+                Region = Faker.Address.Country(),
                 City = Faker.Address.City(),
                 Street = Faker.Address.StreetName(),
                 Building = Faker.Address.BuildingNumber(),
@@ -83,11 +84,11 @@ public class OrderInMemoryRepository : IOrderRepository
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        var orders = _orders.Values.Where(x => filters.RegionFilterIds.Count > 0 && filters.RegionFilterIds.Contains(x.DeliveryAddress.RegionId) &&
+        var orders = _orders.Values.Where(x => filters.RegionFilterIds.Count > 0 && filters.RegionFilterIds.Contains(x.RegionId) &&
                                         filters.TypeOrder.HasValue && x.Type == filters.TypeOrder.Value);
 
         if (filters.IsOrderByFilter)
-            orders = orders.OrderBy(x => x.DeliveryAddress.RegionId);
+            orders = orders.OrderBy(x => x.RegionId);
 
         var skip = filters.OnPage * (filters.CurrentPage - 1);
 
