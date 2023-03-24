@@ -21,17 +21,17 @@ public interface IOrderRepository
     Task UpdateAsync(Order order, CancellationToken token);
 
     /// <summary>
-    ///  Проверка на существование заказа
-    /// </summary>
-    Task<bool> IsExistsAsync(long orderId, CancellationToken token);
-
-    /// <summary>
     ///  Постраничное получение заказов с фильтрацией по регионам и типу заказа
     /// </summary>
     Task<Order[]> GetOrdersListWithFiltersByPageAsync(OrdersListWithFiltersRequest filters, CancellationToken token);
 
     /// <summary>
-    ///  Получение заказов, соответсвующих условию
+    ///  Получение заказов клиента, начиная с опредленного периода
     /// </summary>
-    Task<Order[]> GetManyAsync(Func<Order, bool> where, CancellationToken token);
+    Task<Order[]> GetOrdersForClientByTimeAsync(DateTimeOffset dateStart,int clientId, CancellationToken token);
+
+    /// <summary>
+    ///  Получение заказов по регионам, начиная с опредленного периода
+    /// </summary>
+    Task<Order[]> GetOrdersListByRegionsAndDateTime(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token);
 }

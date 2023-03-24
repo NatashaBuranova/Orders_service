@@ -1,4 +1,5 @@
-﻿using FluentMigrator.Runner;
+﻿using Dapper;
+using FluentMigrator.Runner;
 using Grpc.Net.ClientFactory;
 using Ozon.Route256.Five.OrderService.ClientBalancing;
 using Ozon.Route256.Five.OrderService.DateTimeProvider;
@@ -35,6 +36,7 @@ public class Startup
                 .WithMigrationsIn(typeof(CreateTableMigration).Assembly)
             );
 
+        SqlMapper.AddTypeHandler(AdressObjectHandler.Instance);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -73,9 +75,9 @@ public class Startup
                 options.Address = new Uri("http://localhost:5004");
             });
 
-        services.AddScoped<IOrderRepository, OrderInMemoryRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IRegionRepository, RegionRepository>();
-        services.AddScoped<IClientRepository, ClientInMemoryRepository>();
+        services.AddScoped<IClientRepository, ClientRepository>();
 
         services.AddScoped<IPostgresConnectionFactory, PostgresConnectionFactory>();
 

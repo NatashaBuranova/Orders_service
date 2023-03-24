@@ -22,13 +22,7 @@ SELECT
     stockcoordinate[1] {nameof(Region.StockLongitude)} 
 FROM region where LOWER(name) = LOWER(@regionName)";
 
-    private readonly string _getByIdQuery = $@"
-SELECT EXISTS (SELECT 
-    id {nameof(Region.Id)}, 
-    name {nameof(Region.Name)}, 
-    stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    stockcoordinate[1] {nameof(Region.StockLongitude)} 
-FROM region where id = @regionId)";
+    private readonly string _IsExistQuery = @"SELECT EXISTS (SELECT * FROM region where id = @regionId)";
 
     private readonly IPostgresConnectionFactory _connectionFactory;
 
@@ -54,8 +48,7 @@ FROM region where id = @regionId)";
     public async Task<bool> IsExistsAsync(long regionId, CancellationToken token)
     {
         await using var connection = await _connectionFactory.GetConnectionAsync();
-        var result = await connection.QueryFirstOrDefaultAsync<bool>(_getByIdQuery, new { regionId });
-
+        var result = await connection.QueryFirstOrDefaultAsync<bool>(_IsExistQuery, new { regionId });
         return result;
     }
 }

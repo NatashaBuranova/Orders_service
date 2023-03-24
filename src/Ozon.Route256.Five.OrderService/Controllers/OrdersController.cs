@@ -12,7 +12,6 @@ public class OrdersController : BaseController
     private readonly IRegionRepository _regionRepository;
     private readonly IClientRepository _clientRepository;
     private readonly ICanceledOrderServices _canceledOrderServices;
-    private readonly IGetClientServices _clientServices;
 
     private static readonly HashSet<OrderState> ForbiddenToCancelStates = new()
     {
@@ -23,13 +22,11 @@ public class OrdersController : BaseController
     public OrdersController(IOrderRepository orderRepository,
         ICanceledOrderServices canceledOrderServices,
         IRegionRepository regionRepository,
-        IGetClientServices clientServices,
         IClientRepository clientRepository)
     {
         _orderRepository = orderRepository;
         _canceledOrderServices = canceledOrderServices;
         _regionRepository = regionRepository;
-        _clientServices = clientServices;
         _clientRepository = clientRepository;
     }
 
@@ -111,9 +108,7 @@ public class OrdersController : BaseController
 
         }
 
-        var orders = await _orderRepository.GetManyAsync(x => x.DateCreate >= request.startPeriod &&
-                                                   request.regionIds.Count > 0 && request.regionIds.Contains(x.RegionId),
-                                                   token);
+        var orders = await _orderRepository.GetOrdersListByRegionsAndDateTime(request.startPeriod, request.regionIds, token);
 
         var regionsGrouping = orders.GroupBy(x => x.RegionId);
         var ordersinRegions = new List<OrdersInRegionResponse>();
@@ -132,7 +127,7 @@ public class OrdersController : BaseController
                 CountOrders = region.Count(),
                 TotalWeight = totalWeight,
                 TotalSumOrders = totalSum,
-                CountClients = region.Select(x=>x.ClientId).Distinct().Count(),
+                CountClients = region.Select(x => x.ClientId).Distinct().Count(),
             });
         }
 
@@ -143,10 +138,10 @@ public class OrdersController : BaseController
     public async Task<IActionResult> GetOrdersForClientByTimeAsync([FromBody] OrdersForClientByTimeRequest request, CancellationToken token)
     {
 
-        if (! await _clientRepository.IsExistsAsync(request.ClientId, token))
+        if (!await _clientRepository.IsExistsAsync(request.ClientId, token))
             return NotFound($"Customer with id: {request.ClientId} not found");
 
-        var orders = await _orderRepository.GetManyAsync(x => x.DateCreate >= request.StartPeriod && x.ClientId == request.ClientId, token);
+        var orders = await _orderRepository.GetOrdersForClientByTimeAsync(request.StartPeriod, request.ClientId, token);
         var skip = request.OnPage * (request.CurrentPage - 1);
         orders = orders.Skip(skip).Take(request.OnPage).ToArray();
 

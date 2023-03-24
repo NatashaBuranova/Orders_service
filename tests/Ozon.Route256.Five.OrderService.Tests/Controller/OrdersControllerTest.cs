@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Ozon.Route256.Five.OrderService.Controllers;
-using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
-using Ozon.Route256.Five.OrderService.Controllers.DTO.Regions;
 using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Models.Enums;
 using Ozon.Route256.Five.OrderService.Repositories;
@@ -17,7 +15,6 @@ public class OrdersControllerTests
     private readonly Mock<IClientRepository> _clientRepositoryMock = new();
     private readonly Mock<ICanceledOrderServices> _canceledOrderServicesMock = new();
     private readonly Mock<IRegionRepository> _regionRepositoryMock = new();
-    private readonly Mock<IGetClientServices> _clientServicesMock = new();
 
     private readonly OrdersController _ordersController;
 
@@ -27,7 +24,6 @@ public class OrdersControllerTests
             _orderRepositoryMock.Object,
             _canceledOrderServicesMock.Object,
             _regionRepositoryMock.Object,
-            _clientServicesMock.Object,
             _clientRepositoryMock.Object);
     }
 
@@ -214,7 +210,7 @@ public class OrdersControllerTests
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        _orderRepositoryMock.Setup(x => x.GetManyAsync(It.IsAny<Func<Order, bool>>(), token))
+        _orderRepositoryMock.Setup(x => x.GetOrdersListByRegionsAndDateTime(It.IsAny<DateTimeOffset>(), It.IsAny<List<long>>(), token))
             .ReturnsAsync(new Order[]
             {
                 new Order
@@ -304,7 +300,7 @@ public class OrdersControllerTests
             new Order { Id = 2, State = OrderState.SentToCustomer, DateCreate = DateTime.Now.AddDays(-1), CountProduct = 1, TotalSumm = 5, ClientId = 1, Client = client }
         };
 
-        _orderRepositoryMock.Setup(x => x.GetManyAsync(It.IsAny<Func<Order, bool>>(), token)).ReturnsAsync(orders);
+        _orderRepositoryMock.Setup(x => x.GetOrdersForClientByTimeAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), token)).ReturnsAsync(orders);
         _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(true);
 
         // Act

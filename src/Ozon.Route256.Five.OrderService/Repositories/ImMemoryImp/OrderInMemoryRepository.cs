@@ -49,14 +49,6 @@ public class OrderInMemoryRepository : IOrderRepository
         return Task.FromResult(result);
     }
 
-    public Task<bool> IsExistsAsync(long orderId, CancellationToken token)
-    {
-        if (token.IsCancellationRequested)
-            return Task.FromCanceled<bool>(token);
-
-        return Task.FromResult(_orders.ContainsKey(orderId));
-    }
-
     public Task InsertAsync(Order newOrder, CancellationToken token)
     {
         if (token.IsCancellationRequested)
@@ -95,12 +87,21 @@ public class OrderInMemoryRepository : IOrderRepository
         return Task.FromResult(orders.Skip(skip).Take(filters.OnPage).ToArray());
     }
 
-    public Task<Order[]> GetManyAsync(Func<Order, bool> where, CancellationToken token)
-    {
 
+    public Task<Order[]> GetOrdersForClientByTimeAsync(DateTimeOffset dateStart, int clientId, CancellationToken token)
+    {
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        return Task.FromResult(_orders.Values.Where(where).ToArray());
+        return Task.FromResult(_orders.Values.Where(x => x.DateCreate >= dateStart && x.ClientId == clientId).ToArray());
+    }
+
+    public Task<Order[]> GetOrdersListByRegionsAndDateTime(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token)
+    {
+        if (token.IsCancellationRequested)
+            return Task.FromCanceled<Order[]>(token);
+
+        return Task.FromResult(_orders.Values.Where(x => x.DateCreate >= dateStart &&
+                                                   ((regionIds.Count > 0 && regionIds.Contains(x.RegionId)) || regionIds.Count==0)).ToArray());
     }
 }

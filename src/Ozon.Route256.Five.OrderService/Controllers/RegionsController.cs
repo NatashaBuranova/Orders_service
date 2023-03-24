@@ -1,12 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Regions;
-using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Repositories;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Unicode;
 
 namespace Ozon.Route256.Five.OrderService.Controllers;
 
