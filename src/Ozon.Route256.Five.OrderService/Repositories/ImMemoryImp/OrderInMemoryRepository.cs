@@ -70,8 +70,9 @@ public class OrderInMemoryRepository : IOrderRepository
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        var orders = _orders.Values.Where(x => filters.RegionFilterIds.Count > 0 && filters.RegionFilterIds.Contains(x.DeliveryAddress.RegionId) &&
-                                        filters.TypeOrder.HasValue && x.Type == filters.TypeOrder.Value);
+        var orders = _orders.Values.Where(x => ((filters.RegionFilterIds.Count > 0 && filters.RegionFilterIds.Contains(x.DeliveryAddress.RegionId)) ||
+                                                filters.RegionFilterIds.Count == 0) &&
+                                                ((filters.TypeOrder.HasValue && x.Type == filters.TypeOrder.Value) || !filters.TypeOrder.HasValue));
 
         if (filters.IsOrderByFilter)
             orders = orders.OrderBy(x => x.DeliveryAddress.RegionId);

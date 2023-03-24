@@ -110,7 +110,8 @@ public class OrdersController : BaseController
         }
 
         var orders = await _orderRepository.GetManyAsync(x => x.DateCreate >= request.startPeriod &&
-                                                   request.regionIds.Count > 0 && request.regionIds.Contains(x.DeliveryAddress.RegionId),
+                                                   ((request.regionIds.Count > 0 && request.regionIds.Contains(x.DeliveryAddress.RegionId)) ||
+                                                    request.regionIds.Count == 0),
                                                    token);
 
         var regionsGrouping = orders.GroupBy(x => x.DeliveryAddress.RegionId);
