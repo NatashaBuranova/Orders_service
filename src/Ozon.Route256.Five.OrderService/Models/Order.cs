@@ -12,7 +12,7 @@ public class Order
     public DateTimeOffset DateUpdate { get; set; } 
     public OrderState State { get; set; }
     public OrderType Type { get; set; }
-    public Adress DeliveryAddress { get; set; } 
+    public Address DeliveryAddress { get; set; } 
     public Client Client { get; set; }
     public int ClientId { get; set; }
     public Region Region { get; set; }
