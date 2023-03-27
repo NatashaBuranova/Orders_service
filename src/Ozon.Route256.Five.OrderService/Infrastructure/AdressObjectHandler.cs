@@ -1,22 +1,21 @@
-﻿using Ozon.Route256.Five.OrderService.Models;
-using static Dapper.SqlMapper;
+﻿using static Dapper.SqlMapper;
 using System.Data;
 using System.Text.Json;
 
 namespace Ozon.Route256.Five.OrderService.Infrastructure;
 
-class AdressObjectHandler : TypeHandler<Adress>
+class AddressObjectHandler : TypeHandler<Models.Address>
 {
-    private AdressObjectHandler() { }
-    public static AdressObjectHandler Instance { get; } = new AdressObjectHandler();
+    private AddressObjectHandler() { }
+    public static AddressObjectHandler Instance { get; } = new AddressObjectHandler();
 
-    public override Adress Parse(object value)
+    public override Models.Address Parse(object value)
     {
         var json = (string)value;
-        return json == null ? null : JsonSerializer.Deserialize<Adress>(json);
+        return json == null ? null : JsonSerializer.Deserialize<Models.Address>(json);
     }
 
-    public override void SetValue(IDbDataParameter parameter, Adress value)
+    public override void SetValue(IDbDataParameter parameter, Models.Address value)
     {
         parameter.Value = JsonSerializer.Serialize(value);
     }

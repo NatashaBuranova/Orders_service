@@ -28,11 +28,6 @@ public interface IOrderRepository
     /// <summary>
     ///  Получение заказов клиента, начиная с опредленного периода
     /// </summary>
-    Task<Order[]> GetOrdersForClientByTimeAsync(DateTimeOffset dateStart,int clientId, CancellationToken token);
-
-    /// <summary>
-    ///  Получение заказов клиента, начиная с опредленного периода
-    /// </summary>
     Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token);
 
     /// <summary>

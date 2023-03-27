@@ -71,7 +71,7 @@ customer_id = @{nameof(Order.ClientId)},
 region_id = @{nameof(Order.RegionId)}
 where ""order"".id = @{nameof(Order.Id)}";
 
-    private readonly string _getOrdersForClientByTime = $@"
+    private readonly string _getOrdersForClientByTimePerPage = $@"
 SELECT 
     ""order"".id {nameof(Order.Id)}, 
     date_create {nameof(Order.DateCreate)}, 
@@ -95,7 +95,8 @@ SELECT
 FROM ""order"" 
 INNER JOIN customer ON ""order"".customer_id = customer.id
 INNER JOIN region ON ""order"".region_id = region.id
-where customer_id = @ClientId AND date_create >= @DateStart";
+where customer_id = @ClientId AND date_create >= @DateStart
+LIMIT @Take OFFSET @Skip";
 
     private readonly string _getOrdersForRegionByTime = $@"
 SELECT 
@@ -200,20 +201,23 @@ LIMIT @Take OFFSET @Skip";
         return result.FirstOrDefault();
     }
 
-    public async Task<Order[]> GetOrdersForClientByTimeAsync(DateTimeOffset dateStart, int clientId, CancellationToken token)
+    public async Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token)
     {
+        var skip = filters.OnPage * (filters.CurrentPage - 1);
+
         await using var connection = await _connectionFactory.GetConnectionAsync();
-        var result = await connection.QueryAsync<Order, Models.Client, Region, Order>(_getOrdersForClientByTime, (order, customer, region) =>
+        var result = await connection.QueryAsync<Order, Models.Client, Region, Order>(_getOrdersForClientByTimePerPage, (order, customer, region) =>
         {
             order.Client = customer;
             order.Region = region;
             return order;
-        }, param: new { DateStart = dateStart, ClientId = clientId }, splitOn: "id,id");
+        }, param: new { DateStart = filters.StartPeriod, ClientId = filters.ClientId, Skip = skip, Take = filters.OnPage }, splitOn: "id,id");
 
         return result.ToArray();
     }
 
-    public async Task<Order[]> GetOrdersListByRegionsAndDateTime(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token)
+
+    public async Task<Order[]> GetOrdersListByRegionsAndDateTimeAsync(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token)
     {
         await using var connection = await _connectionFactory.GetConnectionAsync();
         var result = await connection.QueryAsync<Order, Models.Client, Region, Order>(_getOrdersForRegionByTime, (order, customer, region) =>

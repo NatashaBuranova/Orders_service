@@ -36,7 +36,7 @@ public class Startup
                 .WithMigrationsIn(typeof(CreateTableMigration).Assembly)
             );
 
-        SqlMapper.AddTypeHandler(AdressObjectHandler.Instance);
+        SqlMapper.AddTypeHandler(AddressObjectHandler.Instance);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
