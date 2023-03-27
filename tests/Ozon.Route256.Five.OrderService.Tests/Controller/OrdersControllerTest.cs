@@ -13,7 +13,7 @@ public class OrdersControllerTests
 {
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
     private readonly Mock<IClientRepository> _clientRepositoryMock = new();
-    private readonly Mock<ICanceledOrderServices> _canceledOrderServicesMock = new();
+    private readonly Mock<ICancelOrderServices> _canceledOrderServicesMock = new();
     private readonly Mock<IRegionRepository> _regionRepositoryMock = new();
 
     private readonly OrdersController _ordersController;
@@ -77,7 +77,7 @@ public class OrdersControllerTests
         Assert.IsType<OkResult>(result);
         Assert.Equal(OrderState.Cancelled, order.State);
         _orderRepositoryMock.Verify(x => x.UpdateAsync(order, token), Times.Once);
-        _canceledOrderServicesMock.Verify(x => x.CanceledOrderInLogisticsSimulator(ORDER_ID, token), Times.Once);
+        _canceledOrderServicesMock.Verify(x => x.CancelOrderInLogisticsSimulator(ORDER_ID, token), Times.Once);
     }
 
     [Fact]
@@ -210,7 +210,7 @@ public class OrdersControllerTests
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        _orderRepositoryMock.Setup(x => x.GetOrdersListByRegionsAndDateTime(It.IsAny<DateTimeOffset>(), It.IsAny<List<long>>(), token))
+        _orderRepositoryMock.Setup(x => x.GetOrdersListByRegionsAndDateTimeAsync(It.IsAny<DateTimeOffset>(), It.IsAny<List<long>>(), token))
             .ReturnsAsync(new Order[]
             {
                 new Order
@@ -224,7 +224,7 @@ public class OrdersControllerTests
                             Id = 1,
                             Name = "Region 1"
                         },
-                    DeliveryAddress= new Adress()
+                    DeliveryAddress= new Models.Address()
                     {
                         Region="Region 1"
                     },
@@ -242,7 +242,7 @@ public class OrdersControllerTests
                             Id = 2,
                             Name = "Region 2"
                         },
-                    DeliveryAddress= new Adress()
+                    DeliveryAddress= new Models.Address()
                     {
                         Region="Region 2"
                     },
@@ -300,7 +300,7 @@ public class OrdersControllerTests
             new Order { Id = 2, State = OrderState.SentToCustomer, DateCreate = DateTime.Now.AddDays(-1), CountProduct = 1, TotalSumm = 5, ClientId = 1, Client = client }
         };
 
-        _orderRepositoryMock.Setup(x => x.GetOrdersForClientByTimeAsync(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), token)).ReturnsAsync(orders);
+        _orderRepositoryMock.Setup(x => x.GetOrdersForClientByTimePerPageAsync(It.IsAny<OrdersForClientByTimeRequest>(), token)).ReturnsAsync(orders);
         _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(true);
 
         // Act

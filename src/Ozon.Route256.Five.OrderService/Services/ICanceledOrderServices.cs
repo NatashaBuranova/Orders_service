@@ -1,9 +1,9 @@
 ﻿namespace Ozon.Route256.Five.OrderService.Services;
 
-public interface ICanceledOrderServices
+public interface ICancelOrderServices
 {
     /// <summary>
     /// Отмена заказа в симуляторе логистики
     /// </summary>
-    Task CanceledOrderInLogisticsSimulator(long orderId, CancellationToken token);
+    Task CancelOrderInLogisticsSimulator(long orderId, CancellationToken token);
 }

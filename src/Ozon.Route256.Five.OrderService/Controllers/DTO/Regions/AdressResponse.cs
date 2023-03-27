@@ -1,6 +1,6 @@
 ﻿namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Regions;
 
-public class AdressResponse
+public class AddressResponse
 {
     public string? Region { get; set; }
     public string? City { get; set; }

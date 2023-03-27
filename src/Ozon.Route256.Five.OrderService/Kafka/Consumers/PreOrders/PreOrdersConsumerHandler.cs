@@ -58,7 +58,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
             },
             CountProduct = message.Goods.Count,
             State = OrderState.Created,
-            DeliveryAddress = new Adress()
+            DeliveryAddress = new Models.Address()
             {
                 Region = message.Customer.Address.Region,
                 Apartment = message.Customer.Address.Apartment,

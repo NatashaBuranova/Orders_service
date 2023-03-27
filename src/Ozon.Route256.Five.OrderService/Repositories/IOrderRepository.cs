@@ -31,7 +31,12 @@ public interface IOrderRepository
     Task<Order[]> GetOrdersForClientByTimeAsync(DateTimeOffset dateStart,int clientId, CancellationToken token);
 
     /// <summary>
+    ///  Получение заказов клиента, начиная с опредленного периода
+    /// </summary>
+    Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token);
+
+    /// <summary>
     ///  Получение заказов по регионам, начиная с опредленного периода
     /// </summary>
-    Task<Order[]> GetOrdersListByRegionsAndDateTime(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token);
+    Task<Order[]> GetOrdersListByRegionsAndDateTimeAsync(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token);
 }
