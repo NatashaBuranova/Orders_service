@@ -26,7 +26,12 @@ public interface IOrderRepository
     Task<Order[]> GetOrdersListWithFiltersByPageAsync(OrdersListWithFiltersRequest filters, CancellationToken token);
 
     /// <summary>
-    ///  Получение заказов, соответсвующих условию
+    ///  Получение заказов клиента, начиная с опредленного периода
     /// </summary>
-    Task<Order[]> GetManyAsync(Func<Order, bool> where, CancellationToken token);
+    Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token);
+
+    /// <summary>
+    ///  Получение заказов по регионам, начиная с опредленного периода
+    /// </summary>
+    Task<Order[]> GetOrdersListByRegionsAndDateTimeAsync(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token);
 }

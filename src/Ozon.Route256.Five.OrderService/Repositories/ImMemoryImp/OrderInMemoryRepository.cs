@@ -20,9 +20,9 @@ public class OrderInMemoryRepository : IOrderRepository
             DateCreate = Faker.Date.Past(1),
             State = Models.Enums.OrderState.Created,
             Type = Models.Enums.OrderType.Mobile,
-            DeliveryAddress = new Adress()
+            DeliveryAddress = new Models.Address()
             {
-                RegionId = Faker.Random.Int(1, 3),
+                Region = Faker.Address.Country(),
                 City = Faker.Address.City(),
                 Street = Faker.Address.StreetName(),
                 Building = Faker.Address.BuildingNumber(),
@@ -70,24 +70,40 @@ public class OrderInMemoryRepository : IOrderRepository
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        var orders = _orders.Values.Where(x => ((filters.RegionFilterIds.Count > 0 && filters.RegionFilterIds.Contains(x.DeliveryAddress.RegionId)) ||
-                                                filters.RegionFilterIds.Count == 0) &&
-                                                ((filters.TypeOrder.HasValue && x.Type == filters.TypeOrder.Value) || !filters.TypeOrder.HasValue));
+        var orders = _orders.Values.Where(x =>
+        (filters.RegionFilterIds.Count == 0 || filters.RegionFilterIds.Contains(x.RegionId)) &&
+        (!filters.TypeOrder.HasValue || x.Type == filters.TypeOrder.Value));
 
         if (filters.IsOrderByFilter)
-            orders = orders.OrderBy(x => x.DeliveryAddress.RegionId);
+            orders = orders.OrderBy(x => x.RegionId);
 
         var skip = filters.OnPage * (filters.CurrentPage - 1);
 
         return Task.FromResult(orders.Skip(skip).Take(filters.OnPage).ToArray());
     }
 
-    public Task<Order[]> GetManyAsync(Func<Order, bool> where, CancellationToken token)
+    public Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token)
     {
-
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        return Task.FromResult(_orders.Values.Where(where).ToArray());
+        var orders = _orders.Values.Where(x => x.DateCreate >= filters.StartPeriod && x.ClientId == filters.ClientId).ToArray();
+
+        var skip = filters.OnPage * (filters.CurrentPage - 1);
+
+        return Task.FromResult(orders.Skip(skip).Take(filters.OnPage).ToArray());
     }
+
+    public Task<Order[]> GetOrdersListByRegionsAndDateTimeAsync(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token)
+    {
+        if (token.IsCancellationRequested)
+            return Task.FromCanceled<Order[]>(token);
+
+        var orders = _orders.Values.Where(x => x.DateCreate >= dateStart &&
+        (regionIds.Contains(x.RegionId) || regionIds.Count == 0))
+        .ToArray();
+
+        return Task.FromResult(orders);
+    }
+
 }

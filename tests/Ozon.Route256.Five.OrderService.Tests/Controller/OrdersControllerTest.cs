@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Ozon.Route256.Five.OrderService.Controllers;
-using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
-using Ozon.Route256.Five.OrderService.Controllers.DTO.Regions;
 using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Models.Enums;
 using Ozon.Route256.Five.OrderService.Repositories;
@@ -14,9 +12,9 @@ namespace Ozon.Route256.Five.OrderService.Tests.Controllers;
 public class OrdersControllerTests
 {
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
-    private readonly Mock<ICanceledOrderServices> _canceledOrderServicesMock = new();
+    private readonly Mock<IClientRepository> _clientRepositoryMock = new();
+    private readonly Mock<ICancelOrderServices> _canceledOrderServicesMock = new();
     private readonly Mock<IRegionRepository> _regionRepositoryMock = new();
-    private readonly Mock<IGetClientServices> _clientServicesMock = new();
 
     private readonly OrdersController _ordersController;
 
@@ -26,7 +24,7 @@ public class OrdersControllerTests
             _orderRepositoryMock.Object,
             _canceledOrderServicesMock.Object,
             _regionRepositoryMock.Object,
-            _clientServicesMock.Object);
+            _clientRepositoryMock.Object);
     }
 
     [Fact]
@@ -79,7 +77,7 @@ public class OrdersControllerTests
         Assert.IsType<OkResult>(result);
         Assert.Equal(OrderState.Cancelled, order.State);
         _orderRepositoryMock.Verify(x => x.UpdateAsync(order, token), Times.Once);
-        _canceledOrderServicesMock.Verify(x => x.CanceledOrderInLogisticsSimulator(ORDER_ID, token), Times.Once);
+        _canceledOrderServicesMock.Verify(x => x.CancelOrderInLogisticsSimulator(ORDER_ID, token), Times.Once);
     }
 
     [Fact]
@@ -143,6 +141,8 @@ public class OrdersControllerTests
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token))
             .ReturnsAsync(true);
 
+        _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(true);
+
         _orderRepositoryMock.Setup(x => x.GetOrdersListWithFiltersByPageAsync(It.IsAny<OrdersListWithFiltersRequest>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Order[]
@@ -155,15 +155,14 @@ public class OrdersControllerTests
                     CountProduct = 2,
                     TotalSumm = 100,
                     TotalWeight = 2,
-                    ClientId = 1
+                    ClientId = 1,
+                    Client= new Models.Client()
+                    {
+                        Id=1,
+                        FirstName = "John",
+                        LastName = "Doe"
+                    }
                 }
-            });
-
-        _clientServicesMock.Setup(x => x.GetClientAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ClientResponse
-            {
-                FirstName = "John",
-                LastName = "Doe"
             });
 
         // Act
@@ -211,69 +210,44 @@ public class OrdersControllerTests
         _regionRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        _orderRepositoryMock.Setup(x => x.GetManyAsync(It.IsAny<Func<Order, bool>>(), token))
+        _orderRepositoryMock.Setup(x => x.GetOrdersListByRegionsAndDateTimeAsync(It.IsAny<DateTimeOffset>(), It.IsAny<List<long>>(), token))
             .ReturnsAsync(new Order[]
             {
                 new Order
                 {
                     Id = 1,
                     State = OrderState.Created,
-                    DeliveryAddress = new Adress
-                    {
-                        Region = new Region
+                    TotalSumm = 100,
+                    TotalWeight = 10,
+                    Region = new Region
                         {
                             Id = 1,
                             Name = "Region 1"
                         },
-                        RegionId = 1,
+                    DeliveryAddress= new Models.Address()
+                    {
+                        Region="Region 1"
                     },
-                    TotalSumm = 100,
-                    TotalWeight = 10
+                    RegionId = 1,
+                    ClientId = 2,
                 },
                 new Order
                 {
                     Id = 2,
                     State = OrderState.Created,
-                    DeliveryAddress = new Adress
-                    {
-                        Region = new Region
+                    TotalSumm = 200,
+                    TotalWeight = 20,
+                    Region = new Region
                         {
                             Id = 2,
                             Name = "Region 2"
                         },
-                        RegionId = 2,
+                    DeliveryAddress= new Models.Address()
+                    {
+                        Region="Region 2"
                     },
-                    TotalSumm = 200,
-                    TotalWeight = 20
-                }
-            });
-
-        _clientServicesMock.Setup(x => x.GetClientsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<ClientResponse>
-            {
-                new ClientResponse
-                {
-                    Id = 1,
-                    DefaultAdress = new AdressResponse
-                    {
-                        Region = "Region 1"
-                    }
-                },
-                new ClientResponse
-                {
-                    Id = 2,
-                    DefaultAdress = new AdressResponse
-                    {
-                        Region = "Region 1"
-                    }
-                },
-                new ClientResponse
-                {
-                    Id = 3,
-                    DefaultAdress = new AdressResponse
-                    {
-                        Region = "Region 2"
-                    }
+                    RegionId = 2,
+                    ClientId = 4
                 }
             });
 
@@ -286,7 +260,7 @@ public class OrdersControllerTests
         Assert.Equal(2, ordersInRegions.Count);
         Assert.Equal("Region 1", ordersInRegions[0].RegionName);
         Assert.Equal(1, ordersInRegions[0].CountOrders);
-        Assert.Equal(2, ordersInRegions[0].CountClients);
+        Assert.Equal(1, ordersInRegions[0].CountClients);
         Assert.Equal(100, ordersInRegions[0].TotalSumOrders);
         Assert.Equal(10, ordersInRegions[0].TotalWeight);
         Assert.Equal("Region 2", ordersInRegions[1].RegionName);
@@ -302,7 +276,8 @@ public class OrdersControllerTests
         // Arrange
         var request = new OrdersForClientByTimeRequest(1, DateTimeOffset.UtcNow, 10);
         var token = CancellationToken.None;
-        _clientServicesMock.Setup(x => x.GetClientAsync(request.ClientId, token)).ReturnsAsync((ClientResponse)null);
+
+        _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(false);
 
         // Act
         var result = await _ordersController.GetOrdersForClientByTimeAsync(request, token);
@@ -318,14 +293,15 @@ public class OrdersControllerTests
         // Arrange
         var request = new OrdersForClientByTimeRequest(1, DateTimeOffset.UtcNow, 10);
         var token = CancellationToken.None;
-        var client = new ClientResponse { Telephone = "1234567890", FirstName = "John", LastName = "Doe" };
+        var client = new Models.Client { Telephone = "1234567890", FirstName = "John", LastName = "Doe" };
         var orders = new[]
         {
-            new Order { Id = 1, State = OrderState.Delivered, DateCreate = DateTime.Now, CountProduct = 2, TotalSumm = 10, TotalWeight = 1, ClientId = 1 },
-            new Order { Id = 2, State = OrderState.SentToCustomer, DateCreate = DateTime.Now.AddDays(-1), CountProduct = 1, TotalSumm = 5, ClientId = 1 },
+            new Order { Id = 1, State = OrderState.Delivered, DateCreate = DateTime.Now, CountProduct = 2, TotalSumm = 10, TotalWeight = 1, ClientId = 1, Client = client },
+            new Order { Id = 2, State = OrderState.SentToCustomer, DateCreate = DateTime.Now.AddDays(-1), CountProduct = 1, TotalSumm = 5, ClientId = 1, Client = client }
         };
-        _clientServicesMock.Setup(x => x.GetClientAsync(request.ClientId, token)).ReturnsAsync(client);
-        _orderRepositoryMock.Setup(x => x.GetManyAsync(It.IsAny<Func<Order, bool>>(), token)).ReturnsAsync(orders);
+
+        _orderRepositoryMock.Setup(x => x.GetOrdersForClientByTimePerPageAsync(It.IsAny<OrdersForClientByTimeRequest>(), token)).ReturnsAsync(orders);
+        _clientRepositoryMock.Setup(x => x.IsExistsAsync(It.IsAny<long>(), token)).ReturnsAsync(true);
 
         // Act
         var result = await _ordersController.GetOrdersForClientByTimeAsync(request, token);

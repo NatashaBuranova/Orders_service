@@ -17,7 +17,7 @@ public class GetClientServices : IGetClientServices
     public async Task<List<ClientResponse>> GetClientsAsync(CancellationToken token)
     {
         var result = (await _client.GetCustomersAsync(request: new Empty(), cancellationToken: token))
-            .Customers.Select(x => GetClientResponse(x))
+            .Customers.Select(GetClientResponse)
             .ToList();
 
         return result;
@@ -40,13 +40,12 @@ public class GetClientServices : IGetClientServices
             FirstName = customer.FirstName,
             Email = customer.Email,
             Telephone = customer.MobileNumber,
-            Adresses = customer.Addresses.Select(x => GetAdressResponse(x))
-            .ToList(),
-            DefaultAdress = GetAdressResponse(customer.DefaultAddress)
+            Adresses = customer.Addresses.Select(GetAddressResponse).ToList(),
+            DefaultAdress = GetAddressResponse(customer.DefaultAddress)
         };
     }
 
-    private static AdressResponse GetAdressResponse(Customers.Address address)
+    private static AdressResponse GetAddressResponse(Customers.Address address)
     {
         return new AdressResponse()
         {

@@ -12,6 +12,9 @@ public class Order
     public OrderState State { get; set; }
     public OrderType Type { get; set; }
     public long DeliveryAddressId { get; set; }
-    public Adress DeliveryAddress { get; set; } = new();
+    public Address DeliveryAddress { get; set; } = new();
+    public Client Client { get; set; }
     public int ClientId { get; set; }
+    public Region Region { get; set; }
+    public long RegionId { get; set; }
 }

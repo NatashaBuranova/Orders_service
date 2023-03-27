@@ -53,7 +53,7 @@ public class Startup
         services.AddScoped<IOrderRepository, OrderInMemoryRepository>();
         services.AddScoped<IRegionRepository, RegionInMemoryRepository>();
 
-        services.AddTransient<ICanceledOrderServices, CanceledOrderServices>();
+        services.AddTransient<ICancelOrderServices, CanceledOrderServices>();
         services.AddTransient<IGetClientServices, GetClientServices>();
     }
 
