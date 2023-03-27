@@ -2,7 +2,7 @@
 
 namespace Ozon.Route256.Five.OrderService.Helpers;
 
-public class CanceledOrderServices : ICanceledOrderServices
+public class CanceledOrderServices : ICancelOrderServices
 {
     private readonly LogisticsSimulatorService.LogisticsSimulatorService.LogisticsSimulatorServiceClient _client;
 
@@ -11,7 +11,7 @@ public class CanceledOrderServices : ICanceledOrderServices
         _client = client;
     }
 
-    public async Task CanceledOrderInLogisticsSimulator(long orderId, CancellationToken token)
+    public async Task CancelOrderInLogisticsSimulator(long orderId, CancellationToken token)
     {
         var result = await _client.OrderCancelAsync(new LogisticsSimulatorService.Order
         {

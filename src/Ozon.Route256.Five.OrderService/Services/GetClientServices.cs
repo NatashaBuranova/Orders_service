@@ -28,7 +28,7 @@ public class GetClientServices : IGetClientServices
         if (stringCahce != null) return JsonSerializer.Deserialize<List<ClientResponse>>(stringCahce);
 
         var result = (await _client.GetCustomersAsync(request: new Empty(), cancellationToken: token))
-            .Customers.Select(x => GetClientResponse(x))
+            .Customers.Select(GetClientResponse)
             .ToList();
 
         await _distributedCache.SetStringAsync(CLIENTS_CACHE_NAME, JsonSerializer.Serialize(result), new DistributedCacheEntryOptions
@@ -67,15 +67,14 @@ public class GetClientServices : IGetClientServices
             FirstName = customer.FirstName,
             Email = customer.Email,
             Telephone = customer.MobileNumber,
-            Adresses = customer.Addresses.Select(x => GetAdressResponse(x))
-            .ToList(),
-            DefaultAdress = GetAdressResponse(customer.DefaultAddress)
+            Addresses = customer.Addresses.Select(GetAddressResponse).ToList(),
+            DefaultAddress = GetAddressResponse(customer.DefaultAddress)
         };
     }
 
-    private static AdressResponse GetAdressResponse(Customers.Address address)
+    private static AddressResponse GetAddressResponse(Customers.Address address)
     {
-        return new AdressResponse()
+        return new AddressResponse()
         {
             City = address.City,
             Region = address.Region,

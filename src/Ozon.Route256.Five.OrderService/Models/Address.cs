@@ -1,6 +1,6 @@
 ﻿namespace Ozon.Route256.Five.OrderService.Models;
 
-public class Adress
+public class Address
 {
     public string Region { get; set; }
     public string? City { get; set; }
