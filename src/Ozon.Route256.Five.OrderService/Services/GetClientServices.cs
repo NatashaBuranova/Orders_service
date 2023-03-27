@@ -40,14 +40,14 @@ public class GetClientServices : IGetClientServices
             FirstName = customer.FirstName,
             Email = customer.Email,
             Telephone = customer.MobileNumber,
-            Adresses = customer.Addresses.Select(GetAddressResponse).ToList(),
-            DefaultAdress = GetAddressResponse(customer.DefaultAddress)
+            Addresses = customer.Addresses.Select(GetAddressResponse).ToList(),
+            DefaultAddress = GetAddressResponse(customer.DefaultAddress)
         };
     }
 
-    private static AdressResponse GetAddressResponse(Customers.Address address)
+    private static AddressResponse GetAddressResponse(Customers.Address address)
     {
-        return new AdressResponse()
+        return new AddressResponse()
         {
             City = address.City,
             Region = address.Region,
