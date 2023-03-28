@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using FluentMigrator.Runner;
 using Grpc.Net.ClientFactory;
 using Ozon.Route256.Five.OrderService.ClientBalancing;
 using Ozon.Route256.Five.OrderService.DateTimeProvider;
@@ -8,10 +7,8 @@ using Ozon.Route256.Five.OrderService.Helpers;
 using Ozon.Route256.Five.OrderService.Infrastructure;
 using Ozon.Route256.Five.OrderService.Kafka;
 using Ozon.Route256.Five.OrderService.Midlewares;
-using Ozon.Route256.Five.OrderService.Migrations;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Repositories.DataBaseImp;
-using Ozon.Route256.Five.OrderService.Repositories.ImMemoryImp;
 using Ozon.Route256.Five.OrderService.Services;
 using InterceptorRegistration = Grpc.Net.ClientFactory.InterceptorRegistration;
 
@@ -29,13 +26,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddFluentMigratorCore()
-            .ConfigureRunner(builder => builder
-                .AddPostgres()
-                .WithGlobalConnectionString("Server=localhost;Port=5433;Database=orders_db;User Id=admin;Password=admin;")
-                .WithMigrationsIn(typeof(CreateTableMigration).Assembly)
-            );
-
         SqlMapper.AddTypeHandler(AddressObjectHandler.Instance);
 
         services.AddControllers();
@@ -51,7 +41,8 @@ public class Startup
         services.AddGrpcClient<SdService.SdServiceClient>(
             options =>
             {
-                options.Address = new Uri("http://localhost:5010");
+                //options.Address = new Uri("http://localhost:5010");
+                options.Address = new Uri("http://localhost:5004");
                 options.InterceptorRegistrations.Add(
                     new InterceptorRegistration(
                         InterceptorScope.Client,
@@ -74,6 +65,10 @@ public class Startup
             {
                 options.Address = new Uri("http://localhost:5004");
             });
+
+        services.AddScoped<IShardingRule<long>, RoundRobinLongShardingRule>();
+        services.AddScoped<IShardingRule<string>, RoundRobinStringShardingRule>();
+        services.AddScoped<IShardConnectionFactory, ShardConnectionFactory>();
 
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IRegionRepository, RegionRepository>();

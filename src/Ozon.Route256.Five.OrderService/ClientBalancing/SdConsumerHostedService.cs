@@ -22,7 +22,7 @@ public class SdConsumerHostedService : BackgroundService
             using var stream = _client.DbResources(
                 new DbResourcesRequest
                 {
-                    ClusterName = "cluster"
+                    ClusterName = "orders-cluster"
                 },
                 cancellationToken: stoppingToken);
 
@@ -37,8 +37,11 @@ public class SdConsumerHostedService : BackgroundService
 
                     foreach (var replica in response.Replicas)
                     {
-                        var endpoint = new DbEndpoint($"{replica.Host}:{replica.Port}", GetDbReplicaType(replica.Type));
-                        endpoints.Add(endpoint);
+                        var endpoint = new DbEndpoint(
+                            $"{replica.Host}:{replica.Port}",
+                            GetDbReplicaType(replica.Type),
+                            replica.Buckets.ToArray());
+
                     }
 
                     await _dbStore.UpdateEndpointsAsync(endpoints);
