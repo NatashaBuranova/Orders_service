@@ -70,16 +70,15 @@ public class OrderInMemoryRepository : IOrderRepository
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        var orders = _orders.Values.Where(x =>
-        (filters.RegionFilterIds.Count == 0 || filters.RegionFilterIds.Contains(x.RegionId)) &&
-        (!filters.TypeOrder.HasValue || x.Type == filters.TypeOrder.Value));
+        var orders = _orders.Values.Where(x => filters.RegionFilterIds.Count == 0 || filters.RegionFilterIds.Contains(x.RegionId))
+                                   .Where(x => !filters.TypeOrder.HasValue || x.Type == filters.TypeOrder.Value);
 
         if (filters.IsOrderByFilter)
             orders = orders.OrderBy(x => x.RegionId);
 
-        var skip = filters.OnPage * (filters.CurrentPage - 1);
+        var skip = filters.PageSize * (filters.CurrentPage - 1);
 
-        return Task.FromResult(orders.Skip(skip).Take(filters.OnPage).ToArray());
+        return Task.FromResult(orders.Skip(skip).Take(filters.PageSize).ToArray());
     }
 
     public Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token)
@@ -89,9 +88,9 @@ public class OrderInMemoryRepository : IOrderRepository
 
         var orders = _orders.Values.Where(x => x.DateCreate >= filters.StartPeriod && x.ClientId == filters.ClientId).ToArray();
 
-        var skip = filters.OnPage * (filters.CurrentPage - 1);
+        var skip = filters.PageSize * (filters.CurrentPage - 1);
 
-        return Task.FromResult(orders.Skip(skip).Take(filters.OnPage).ToArray());
+        return Task.FromResult(orders.Skip(skip).Take(filters.PageSize).ToArray());
     }
 
     public Task<Order[]> GetOrdersListByRegionsAndDateTimeAsync(DateTimeOffset dateStart, List<long> regionIds, CancellationToken token)
@@ -99,9 +98,9 @@ public class OrderInMemoryRepository : IOrderRepository
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        var orders = _orders.Values.Where(x => x.DateCreate >= dateStart &&
-        (regionIds.Contains(x.RegionId) || regionIds.Count == 0))
-        .ToArray();
+        var orders = _orders.Values.Where(x => x.DateCreate >= dateStart)
+                                   .Where(x => regionIds.Contains(x.RegionId) || regionIds.Count == 0)
+                                   .ToArray();
 
         return Task.FromResult(orders);
     }

@@ -13,14 +13,14 @@ public static class OrderHelpers
             Status = order.State,
             DateCreate = order.DateCreate,
             CountProduct = order.CountProduct,
-            Telephone = order.Client.Telephone,
+            Telephone = order.Client?.Telephone,
             TotalSumm = order.TotalSumm,
             TotalWeight = order.TotalWeight,
             DeliveryAddress = order.DeliveryAddress,
             Client = new ClientName()
             {
-                FirstName = order.Client.FirstName,
-                LastName = order.Client.LastName,
+                FirstName = order.Client?.FirstName,
+                LastName = order.Client?.LastName,
             }
         }).ToList();
     }
@@ -30,7 +30,7 @@ public static class OrderHelpers
         return orders.GroupBy(x => x.RegionId)
             .Select(x => new OrdersInRegionResponse
             {
-                RegionName = x.First().DeliveryAddress.Region,
+                RegionName = x.First()?.DeliveryAddress?.Region,
                 CountOrders = x.Count(),
                 CountClients = x.Select(x => x.ClientId).Distinct().Count(),
                 TotalSumOrders = x.Sum(t => t.TotalSumm),

@@ -27,23 +27,23 @@ public class OrdersService : Orders.OrdersBase
             DateCreate = order.DateCreate.ToTimestamp(),
             DeliveryAddress = new Address()
             {
-                Region = order.DeliveryAddress.Region,
-                Street = order.DeliveryAddress.Street,
-                Apartment = order.DeliveryAddress.Apartment,
-                City = order.DeliveryAddress.City,
-                Building = order.DeliveryAddress.Building,
-                Latitude = order.DeliveryAddress.Latitude,
-                Longitude = order.DeliveryAddress.Longitude
+                Region = order.DeliveryAddress?.Region,
+                Street = order.DeliveryAddress?.Street,
+                Apartment = order.DeliveryAddress?.Apartment,
+                City = order.DeliveryAddress?.City,
+                Building = order.DeliveryAddress?.Building,
+                Latitude = order.DeliveryAddress?.Latitude != null ? order.DeliveryAddress.Latitude : default,
+                Longitude = order.DeliveryAddress?.Longitude != null ? order.DeliveryAddress.Longitude : default
             },
             Client = new Client()
             {
-                FirstName = order.Client.FirstName,
-                LastName = order.Client.LastName
+                FirstName = order.Client?.FirstName,
+                LastName = order.Client?.LastName
             },
             CountProduct = order.CountProduct,
-            Region = order.DeliveryAddress.Region,
+            Region = order.DeliveryAddress?.Region,
             Status = (int)order.State,
-            Telephone = order.Client.Telephone,
+            Telephone = order.Client?.Telephone,
             TotalSum = order.TotalSumm,
             TotalWeight = order.TotalWeight,
             Type = (int)order.Type
