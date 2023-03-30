@@ -22,6 +22,8 @@ public class SendNewOrder : ISendNewOrder
 
     private static bool IsOrderValid(Order order)
     {
+        if (order.DeliveryAddress == null || order.Region == null) return false;
+
         var distance = DistanceCalculator.CalculateDistance(new Point(order.DeliveryAddress.Latitude, order.DeliveryAddress.Latitude),
             new Point(order.Region.StockLatitude, order.Region.StockLongitude));
 

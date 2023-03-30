@@ -1,4 +1,5 @@
-﻿using Ozon.Route256.Five.OrderService.DateTimeProvider;
+﻿using Microsoft.AspNetCore.Mvc;
+using Ozon.Route256.Five.OrderService.DateTimeProvider;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.BackgroundConsumer;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders;
 using Ozon.Route256.Five.OrderService.Models;
@@ -43,6 +44,8 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
         var client = await _clientServices.GetClientAsync(message.Customer.Id, token);
         var region = await _regionRepository.FindAsync(message.Customer.Address.Region, token);
 
+        if (region == null) throw new Exception($"For customer with id={message.Customer.Id} not found region {message.Customer.Address.Region}");
+
         return new Order()
         {
             Id = message.Id,
@@ -52,9 +55,9 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
             Client = new Models.Client()
             {
                 Id = client.Id,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                Telephone = client.Telephone
+                FirstName = client.FirstName ?? "",
+                LastName = client.LastName ?? "",
+                Telephone = client.Telephone ?? ""
             },
             CountProduct = message.Goods.Count,
             State = OrderState.Created,

@@ -2,11 +2,11 @@
 
 namespace Ozon.Route256.Five.OrderService.Helpers;
 
-public class CanceledOrderServices : ICancelOrderServices
+public class CancelOrderServices : ICancelOrderServices
 {
     private readonly LogisticsSimulatorService.LogisticsSimulatorService.LogisticsSimulatorServiceClient _client;
 
-    public CanceledOrderServices(LogisticsSimulatorService.LogisticsSimulatorService.LogisticsSimulatorServiceClient client)
+    public CancelOrderServices(LogisticsSimulatorService.LogisticsSimulatorService.LogisticsSimulatorServiceClient client)
     {
         _client = client;
     }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Regions;
+using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Services;
 using System.Text.Json;
 
@@ -25,7 +26,7 @@ public class GetClientServices : IGetClientServices
 
         var stringCahce = await _distributedCache.GetStringAsync(CLIENTS_CACHE_NAME, token: token);
 
-        if (stringCahce != null) return JsonSerializer.Deserialize<List<ClientResponse>>(stringCahce);
+        if (!string.IsNullOrEmpty(stringCahce)) return JsonSerializer.Deserialize<List<ClientResponse>>(stringCahce);
 
         var result = (await _client.GetCustomersAsync(request: new Empty(), cancellationToken: token))
             .Customers.Select(GetClientResponse)
@@ -43,10 +44,12 @@ public class GetClientServices : IGetClientServices
     {
         var stringCahce = await _distributedCache.GetStringAsync($"{CLIENT_CACHE_NAME}:{customerId}", token: token);
 
-        if (stringCahce != null) return JsonSerializer.Deserialize<ClientResponse>(stringCahce);
+        if (!string.IsNullOrEmpty(stringCahce)) return JsonSerializer.Deserialize<ClientResponse>(stringCahce);
 
         var result = await _client.GetCustomerAsync(
             new Customers.GetCustomerByIdRequest { Id = customerId }, cancellationToken: token);
+
+        if (result == null) throw new Exception($"Customer with id={customerId} not found");
 
         var clientResponse = GetClientResponse(result);
 
