@@ -26,4 +26,4 @@ public static class DistanceCalculator
     }
 }
 
-public record Point(double Latitude, double Longitude);
+

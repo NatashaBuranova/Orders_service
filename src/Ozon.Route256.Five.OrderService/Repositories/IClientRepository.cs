@@ -8,4 +8,8 @@ public interface IClientRepository
     /// </summary>
     Task<bool> IsExistsAsync(long clientId, CancellationToken token);
 
+    /// <summary>
+    ///  Создание клиента
+    /// </summary>
+    public Task InsertAsync(Models.Client newClient, CancellationToken token);
 }
