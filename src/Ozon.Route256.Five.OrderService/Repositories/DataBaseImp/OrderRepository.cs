@@ -36,7 +36,8 @@ where ""order"".id = @orderId";
 
     private readonly string _insertQuery = $@"
 INSERT INTO ""order""
-    (date_create, 
+    ( id,
+    date_create, 
     date_update, 
     state, 
     type, 
@@ -46,7 +47,8 @@ INSERT INTO ""order""
     address,
     customer_id, 
     region_id)
-VALUES ( @{nameof(Order.DateCreate)},
+VALUES ( @{nameof(Order.Id)},
+@{nameof(Order.DateCreate)},
 @{nameof(Order.DateUpdate)},
 @{nameof(Order.State)},
 @{nameof(Order.Type)},

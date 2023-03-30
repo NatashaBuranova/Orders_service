@@ -8,18 +8,18 @@ public class CreateTableMigration : Migration
     public override void Up()
     {
         Create.Table("region")
-            .WithColumn("id").AsInt32().PrimaryKey().Identity()
+            .WithColumn("id").AsInt64().PrimaryKey().Identity()
             .WithColumn("name").AsString().NotNullable()
             .WithColumn("stockcoordinate").AsCustom("point").NotNullable();
 
         Create.Table("customer")
-            .WithColumn("id").AsInt32().PrimaryKey().Identity()
+            .WithColumn("id").AsInt32().PrimaryKey()
             .WithColumn("first_name").AsString().NotNullable()
             .WithColumn("last_name").AsString().NotNullable()
             .WithColumn("phone_number").AsString().NotNullable();
 
         Create.Table("order")
-            .WithColumn("id").AsInt32().PrimaryKey().Identity()
+            .WithColumn("id").AsInt64().PrimaryKey()
             .WithColumn("date_create").AsDateTimeOffset().NotNullable()
             .WithColumn("date_update").AsDateTimeOffset().NotNullable()
             .WithColumn("state").AsInt32().NotNullable()
