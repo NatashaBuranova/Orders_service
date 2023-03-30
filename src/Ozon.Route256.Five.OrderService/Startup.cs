@@ -76,7 +76,7 @@ public class Startup
 
         services.AddScoped<IPostgresConnectionFactory, PostgresConnectionFactory>();
 
-        services.AddTransient<ICancelOrderServices, CanceledOrderServices>();
+        services.AddTransient<ICancelOrderServices, CancelOrderServices>();
         services.AddTransient<IGetClientServices, GetClientServices>();
         services.AddTransient<ISendNewOrder, SendNewOrder>();
 

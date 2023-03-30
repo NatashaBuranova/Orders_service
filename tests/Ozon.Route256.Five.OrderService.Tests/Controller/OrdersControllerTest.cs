@@ -178,8 +178,8 @@ public class OrdersControllerTests
         Assert.Equal(2, order.CountProduct);
         Assert.Equal(100, order.TotalSumm);
         Assert.Equal(2, order.TotalWeight);
-        Assert.Equal("John", order.Client.FirstName);
-        Assert.Equal("Doe", order.Client.LastName);
+        Assert.Equal("John", order.Client?.FirstName);
+        Assert.Equal("Doe", order.Client?.LastName);
     }
 
     [Fact]
@@ -320,8 +320,8 @@ public class OrdersControllerTests
             Assert.Equal(orders[i].TotalSumm, response[i].TotalSumm);
             Assert.Equal(orders[i].TotalWeight, response[i].TotalWeight);
             Assert.Equal(orders[i].DeliveryAddress, response[i].DeliveryAddress);
-            Assert.Equal(client.FirstName, response[i].Client.FirstName);
-            Assert.Equal(client.LastName, response[i].Client.LastName);
+            Assert.Equal(client.FirstName, response[i].Client?.FirstName);
+            Assert.Equal(client.LastName, response[i].Client?.LastName);
         }
     }
 }
