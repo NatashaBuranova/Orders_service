@@ -9,7 +9,7 @@ public class RegionInMemoryRepository : IRegionRepository
 
     public RegionInMemoryRepository()
     {
-        _region[1] = new Region() { Id = 1, Name = "Moscow", StockLatitude= 55.75, StockLongitude= 37.61 };
+        _region[1] = new Region() { Id = 1, Name = "Moscow", StockLatitude = 55.75, StockLongitude = 37.61 };
         _region[2] = new Region() { Id = 2, Name = "StPetersburg", StockLatitude = 59.93, StockLongitude = 30.31 };
         _region[3] = new Region() { Id = 3, Name = "Novosibirsk", StockLatitude = 55.04, StockLongitude = 82.93 };
     }

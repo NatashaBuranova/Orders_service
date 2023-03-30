@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
 using Ozon.Route256.Five.OrderService.Controllers.DTO.Regions;
-using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Services;
 using System.Text.Json;
 

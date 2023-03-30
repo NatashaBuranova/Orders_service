@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Ozon.Route256.Five.OrderService.DateTimeProvider;
+﻿using Ozon.Route256.Five.OrderService.DateTimeProvider;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.BackgroundConsumer;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders;
 using Ozon.Route256.Five.OrderService.Models;
@@ -12,6 +11,7 @@ namespace Ozon.Route256.Five.OrderService.Consumers.Kafka.PreOrders;
 public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDto>
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly IClientRepository _clientRepository;
     private readonly IGetClientServices _clientServices;
     private readonly IRegionRepository _regionRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -21,19 +21,23 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
         IGetClientServices clinetServices,
         IRegionRepository regionRepository,
         IDateTimeProvider dateTimeProvider,
-        ISendNewOrder sendNewOrder)
+        ISendNewOrder sendNewOrder,
+        IClientRepository clientRepository)
     {
         _orderRepository = orderRepository;
         _clientServices = clinetServices;
         _regionRepository = regionRepository;
         _dateTimeProvider = dateTimeProvider;
         _sendNewOrder = sendNewOrder;
+        _clientRepository = clientRepository;
     }
 
     public async Task Handle(string key, PreOrderDto message, CancellationToken token)
     {
         var newOrder = await GetNewOrderFromMessageAsync(message, token);
+        var client = await GetClientAsync(message.Customer.Id, token);
 
+        await AddClientAsync(client, token);
         await _orderRepository.InsertAsync(newOrder, token);
 
         await _sendNewOrder.SendValidOrder(newOrder, token);
@@ -41,7 +45,6 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
 
     private async Task<Order> GetNewOrderFromMessageAsync(PreOrderDto message, CancellationToken token)
     {
-        var client = await _clientServices.GetClientAsync(message.Customer.Id, token);
         var region = await _regionRepository.FindAsync(message.Customer.Address.Region, token);
 
         if (region == null) throw new Exception($"For customer with id={message.Customer.Id} not found region {message.Customer.Address.Region}");
@@ -51,14 +54,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
             Id = message.Id,
             DateCreate = _dateTimeProvider.CurrentDateTimeOffsetUtc,
             Type = message.Source,
-            ClientId = client.Id,
-            Client = new Models.Client()
-            {
-                Id = client.Id,
-                FirstName = client.FirstName ?? "",
-                LastName = client.LastName ?? "",
-                Telephone = client.Telephone ?? ""
-            },
+            ClientId = message.Customer.Id,
             CountProduct = message.Goods.Count,
             State = OrderState.Created,
             DeliveryAddress = new Models.Address()
@@ -75,6 +71,27 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
             TotalWeight = message.Goods.Select(x => x.Weight).Sum(),
             RegionId = region.Id,
         };
+    }
+
+    private async Task<Models.Client> GetClientAsync(int clientId, CancellationToken token)
+    {
+        var client = await _clientServices.GetClientAsync(clientId, token);
+
+        return new Models.Client()
+        {
+            Id = client.Id,
+            FirstName = client.FirstName ?? "",
+            LastName = client.LastName ?? "",
+            Telephone = client.Telephone ?? ""
+        };
+    }
+
+    private async Task AddClientAsync(Models.Client client, CancellationToken token)
+    {
+        if (!await _clientRepository.IsExistsAsync(client.Id, token))
+        {
+            await _clientRepository.InsertAsync(client, token);
+        }
     }
 }
 
