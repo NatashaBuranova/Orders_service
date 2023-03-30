@@ -8,7 +8,7 @@ public class ClientInMemoryRepository : IClientRepository
 
     public ClientInMemoryRepository() { }
 
-    public Task InsertAsync(Models.Client newClient, CancellationToken token)
+    public Task InsertAsync(Models.Client newClient, long regionId, CancellationToken token)
     {
         if (token.IsCancellationRequested)
             return Task.FromCanceled(token);

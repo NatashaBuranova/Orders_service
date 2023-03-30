@@ -41,7 +41,7 @@ public class SdConsumerHostedService : BackgroundService
                             $"{replica.Host}:{replica.Port}",
                             GetDbReplicaType(replica.Type),
                             replica.Buckets.ToArray());
-
+                        endpoints.Add(endpoint);
                     }
 
                     await _dbStore.UpdateEndpointsAsync(endpoints);

@@ -9,6 +9,7 @@ using Ozon.Route256.Five.OrderService.Kafka;
 using Ozon.Route256.Five.OrderService.Midlewares;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Repositories.DataBaseImp;
+using Ozon.Route256.Five.OrderService.Repositories.ShardImp;
 using Ozon.Route256.Five.OrderService.Services;
 using InterceptorRegistration = Grpc.Net.ClientFactory.InterceptorRegistration;
 
@@ -41,8 +42,8 @@ public class Startup
         services.AddGrpcClient<SdService.SdServiceClient>(
             options =>
             {
-                //options.Address = new Uri("http://localhost:5010");
-                options.Address = new Uri("http://localhost:5004");
+                options.Address = new Uri("http://localhost:5010");
+                //options.Address = new Uri("http://localhost:5004");
                 options.InterceptorRegistrations.Add(
                     new InterceptorRegistration(
                         InterceptorScope.Client,
@@ -70,9 +71,9 @@ public class Startup
         services.AddScoped<IShardingRule<string>, RoundRobinStringShardingRule>();
         services.AddScoped<IShardConnectionFactory, ShardConnectionFactory>();
 
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IRegionRepository, RegionRepository>();
-        services.AddScoped<IClientRepository, ClientRepository>();
+        services.AddScoped<IOrderRepository, OrderShardRepository>();
+        services.AddScoped<IRegionRepository, RegionShardRepository>();
+        services.AddScoped<IClientRepository, ClientShardRepository>();
 
         services.AddScoped<IPostgresConnectionFactory, PostgresConnectionFactory>();
 
