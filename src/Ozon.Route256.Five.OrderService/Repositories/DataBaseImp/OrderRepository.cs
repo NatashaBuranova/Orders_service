@@ -203,7 +203,7 @@ LIMIT @Take OFFSET @Skip";
 
     public async Task<Order[]> GetOrdersForClientByTimePerPageAsync(OrdersForClientByTimeRequest filters, CancellationToken token)
     {
-        var skip = filters.OnPage * (filters.CurrentPage - 1);
+        var skip = filters.PageSize * (filters.CurrentPage - 1);
 
         await using var connection = await _connectionFactory.GetConnectionAsync();
         var result = await connection.QueryAsync<Order, Models.Client, Region, Order>(_getOrdersForClientByTimePerPage, (order, customer, region) =>
@@ -211,7 +211,7 @@ LIMIT @Take OFFSET @Skip";
             order.Client = customer;
             order.Region = region;
             return order;
-        }, param: new { DateStart = filters.StartPeriod, ClientId = filters.ClientId, Skip = skip, Take = filters.OnPage }, splitOn: "id,id");
+        }, param: new { DateStart = filters.StartPeriod, ClientId = filters.ClientId, Skip = skip, Take = filters.PageSize }, splitOn: "id,id");
 
         return result.ToArray();
     }
@@ -232,7 +232,7 @@ LIMIT @Take OFFSET @Skip";
 
     public async Task<Order[]> GetOrdersListWithFiltersByPageAsync(OrdersListWithFiltersRequest filters, CancellationToken token)
     {
-        var skip = filters.OnPage * (filters.CurrentPage - 1);
+        var skip = filters.PageSize * (filters.CurrentPage - 1);
 
         await using var connection = await _connectionFactory.GetConnectionAsync();
 
@@ -242,7 +242,7 @@ LIMIT @Take OFFSET @Skip";
             order.Client = customer;
             order.Region = region;
             return order;
-        }, param: new { RegionIds = filters.RegionFilterIds, Type = filters.TypeOrder, Skip = skip, Take = filters.OnPage }, splitOn: "id,id");
+        }, param: new { RegionIds = filters.RegionFilterIds, Type = filters.TypeOrder, Skip = skip, Take = filters.PageSize }, splitOn: "id,id");
 
         return result.ToArray();
     }
