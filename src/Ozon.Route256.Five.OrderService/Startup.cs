@@ -42,8 +42,7 @@ public class Startup
         services.AddGrpcClient<SdService.SdServiceClient>(
             options =>
             {
-                options.Address = new Uri("http://localhost:5010");
-                //options.Address = new Uri("http://localhost:5004");
+                options.Address = new Uri("http://localhost:5081");
                 options.InterceptorRegistrations.Add(
                     new InterceptorRegistration(
                         InterceptorScope.Client,

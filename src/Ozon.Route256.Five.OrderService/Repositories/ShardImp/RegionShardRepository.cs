@@ -26,6 +26,10 @@ FROM __bucket__.region where LOWER(name) = LOWER(@regionName)";
 
     private readonly string _IsExistQuery = @"SELECT EXISTS (SELECT * FROM __bucket__.region where id = @regionId)";
 
+    private readonly string _indexQuery = @"
+select id from __bucket__.index_region_name
+where last_name = @lastName";
+
     private readonly IShardConnectionFactory _connectionFactory;
     private readonly IShardingRule<long> _shardingRule;
     private readonly int _bucketsCount;
@@ -42,7 +46,13 @@ FROM __bucket__.region where LOWER(name) = LOWER(@regionName)";
 
     public async Task<Region?> FindAsync(string regionName, CancellationToken token)
     {
-        throw new NotImplementedException();
+        await using var connectionIndex = await _connectionFactory.GetConnectionByKeyAsync(regionName, token);
+        var id = await connectionIndex.QueryFirstOrDefaultAsync<int>(_indexQuery, new { regionName });
+        var backetId = _shardingRule.GetBucketId(id, _bucketsCount);
+
+        await using var connection = await _connectionFactory.GetConnectionByBucketAsync(backetId, token);
+        var result = await connection.QueryFirstOrDefaultAsync<Region>(_getByNameQuery, new { regionName });
+        return result;
     }
 
     public async Task<Region[]> GetAllAsync(CancellationToken token)

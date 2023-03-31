@@ -34,7 +34,7 @@ public class OrdersController : BaseController
 
     [HttpPut("{id}/cancel")]
     public async Task<IActionResult> CancelOrderByIdAsync(long id, CancellationToken token)
-    {       
+    {
         var order = await _orderRepository.FindAsync(id, token);
 
         if (order == null)

@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Ozon.Route256.Five.OrderService.ClientBalancing;
 using Ozon.Route256.Five.OrderService.Infrastructure;
 
 namespace Ozon.Route256.Five.OrderService.Repositories.ShardImp;
@@ -18,27 +17,41 @@ VALUES ( @{nameof(Models.Client.Id)},
 @{nameof(Models.Client.LastName)},
 @{nameof(Models.Client.Telephone)})";
 
-    private readonly IShardConnectionFactory _connectionFactory;
-    private readonly IShardingRule<long> _shardingRule;
-    private readonly int _bucketsCount;
+    private readonly string _insertIndexQuery = @"
+INSERT into  __bucket__.index_region_client (
+    region_id,
+    client_id)
+VALUES (
+    @RegionId,
+    @ClientId)";
 
-    public ClientShardRepository(IShardConnectionFactory connectionFactory,
-        IShardingRule<long> shardingRule,
-        IDbStore dbStore)
+    private readonly string _indexQuery = @"
+select region_id from __bucket__.index_region_client
+where client_id = @ClientId";
+
+    private readonly IShardConnectionFactory _connectionFactory;
+
+    public ClientShardRepository(IShardConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
-        _shardingRule = shardingRule;
-        _bucketsCount = dbStore.BucketsCount;
     }
 
     public async Task InsertAsync(Models.Client newClient, long regionId, CancellationToken token)
     {
+        await using var connectionIndex = await _connectionFactory.GetConnectionByKeyAsync(newClient.Id, token);
+        await connectionIndex.ExecuteAsync(_insertIndexQuery, new { ClientId = newClient.Id, RegionId = regionId });
+
         await using var connection = await _connectionFactory.GetConnectionByKeyAsync(regionId, token);
         await connection.ExecuteAsync(_insertQuery, newClient);
     }
 
-    public Task<bool> IsExistsAsync(long clientId, CancellationToken token)
+    public async Task<bool> IsExistsAsync(long clientId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        await using var connectionIndex = await _connectionFactory.GetConnectionByKeyAsync(clientId, token);
+        var ids = await connectionIndex.QueryAsync<long>(_indexQuery, new { clientId });
+
+        if (!ids.Any()) return false;
+
+        return true;
     }
 }
