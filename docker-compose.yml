@@ -17,7 +17,7 @@ services:
   customer-service:
     image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/customer-service:latest
     ports:
-       - "5082:80"
+       - "5004:80"
     restart: unless-stopped
     depends_on:
       - customer-database
@@ -35,7 +35,7 @@ services:
   logistics-simulator:
     image: gitlab-registry.ozon.dev/cs/classroom-5/teachers/five/logistics-simulator:latest
     ports:
-      - "5083:80"
+      - "5080:80"
     restart: unless-stopped
     depends_on:
       - kafka

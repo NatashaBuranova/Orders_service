@@ -1,4 +1,4 @@
-﻿using Ozon.Route256.Five.OrderService.DTO;
+﻿using Ozon.Route256.Five.OrderService.Midlewares.DTO;
 using System.Net;
 
 namespace Ozon.Route256.Five.OrderService.Midlewares;

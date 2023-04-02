@@ -5,9 +5,9 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 service Orders
-{
+{ 
   // Ручка для получения заказа по Id
-  rpc GetOrderById(OrderByIdRequest) returns (Order);
+  rpc GetOrderById(OrderByIdRequest) returns (OrderByIdResponse);
 }
 
 // Запрос получения заказа по Id
@@ -17,10 +17,10 @@ message OrderByIdRequest
 }
 
 // Информация о заказе
-message Order
+message OrderByIdResponse
 {
   int64 id = 1;
-  string count_product  = 2;
+  int32 count_product  = 2;
   int64 total_sum = 3;
   int64 total_weight = 4;
   int32 type = 5;

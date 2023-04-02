@@ -1,12 +1,54 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using Ozon.Route256.Five.OrderService.Repositories;
+using Ozon.Route256.Five.OrderService.Services;
 
 namespace Ozon.Route256.Five.OrderService.GrpsServices;
 
 public class OrdersService : Orders.OrdersBase
 {
-    public override Task<Order> GetOrderById(OrderByIdRequest request, ServerCallContext context)
+    private readonly IOrderRepository _orderRepository;
+
+    public OrdersService(IOrderRepository orderRepository, IGetClientServices clientServices)
     {
-        throw new RpcException(new Status(StatusCode.NotFound, $"Order {request.Id} not found"));
+        _orderRepository = orderRepository;
+    }
+
+    public override async Task<OrderByIdResponse> GetOrderById(OrderByIdRequest request, ServerCallContext context)
+    {
+        var order = await _orderRepository.FindAsync(request.Id, context.CancellationToken);
+
+        if (order == null)
+            throw new RpcException(new Status(StatusCode.NotFound, $"Order {request.Id} not found"));
+
+        return new OrderByIdResponse()
+        {
+            Id = order.Id,
+            DateCreate = order.DateCreate.ToTimestamp(),
+            DeliveryAddress = new Address()
+            {
+                Region = order.DeliveryAddress?.Region,
+                Street = order.DeliveryAddress?.Street,
+                Apartment = order.DeliveryAddress?.Apartment,
+                City = order.DeliveryAddress?.City,
+                Building = order.DeliveryAddress?.Building,
+                Latitude = order.DeliveryAddress?.Latitude != null ? order.DeliveryAddress.Latitude : default,
+                Longitude = order.DeliveryAddress?.Longitude != null ? order.DeliveryAddress.Longitude : default
+            },
+            Client = new Client()
+            {
+                FirstName = order.Client?.FirstName,
+                LastName = order.Client?.LastName
+            },
+            CountProduct = order.CountProduct,
+            Region = order.DeliveryAddress?.Region,
+            Status = (int)order.State,
+            Telephone = order.Client?.Telephone,
+            TotalSum = order.TotalSumm,
+            TotalWeight = order.TotalWeight,
+            Type = (int)order.Type
+        };
     }
 }
+
 

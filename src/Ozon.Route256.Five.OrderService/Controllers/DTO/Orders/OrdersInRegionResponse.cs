@@ -3,7 +3,7 @@
 public class OrdersInRegionResponse
 {
     public string? RegionName { get; set; }
-    public long CountOrders { get; set; }
+    public int CountOrders { get; set; }
     public long TotalSumOrders { get; set; }
     public long TotalWeight { get; set; }
     public long CountClients { get; set; }

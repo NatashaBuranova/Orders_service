@@ -1,4 +1,3 @@
 ﻿namespace Ozon.Route256.Five.OrderService.Controllers.DTO.Orders;
 
-public record OrdersListByRegionsAndDateTimeRequest(DateTime startPeriod, List<long> regionIds);
-
+public record OrdersListByRegionsAndDateTimeRequest(DateTimeOffset startPeriod, List<long> regionIds);

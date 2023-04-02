@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Grpc.Core.Api" Version="2.51.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
@@ -30,6 +31,8 @@
   <ItemGroup>
     <Protobuf Include="Protos\sd.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\Orders.proto" GrpcServices="Service" />
+    <Protobuf Include="Protos\LogisticsSimulator.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\Customers.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
