@@ -5,7 +5,7 @@ using Ozon.Route256.Five.OrderService.Repositories;
 
 namespace Ozon.Route256.Five.OrderService.Consumers.Kafka.OrderEvents;
 
-public class OrderEventsConsumerHandler : IKafkaConsumerHandler<string, OrderEventDTO>
+public class OrderEventsConsumerHandler : IKafkaConsumerHandler<string, OrderEventRequest>
 {
     private readonly IOrderRepository _orderRepository;
 
@@ -14,7 +14,7 @@ public class OrderEventsConsumerHandler : IKafkaConsumerHandler<string, OrderEve
         _orderRepository = orderRepository;
     }
 
-    public async Task Handle(string key, OrderEventDTO message, CancellationToken token)
+    public async Task HandleAsync(string key, OrderEventRequest message, CancellationToken token)
     {
         var order = await _orderRepository.FindAsync(message.Id, token);
 

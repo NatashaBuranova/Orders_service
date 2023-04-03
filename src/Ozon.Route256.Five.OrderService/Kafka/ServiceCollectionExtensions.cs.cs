@@ -4,7 +4,7 @@ using Ozon.Route256.Five.OrderService.Consumers.Kafka.OrderEvents;
 using Ozon.Route256.Five.OrderService.Consumers.Kafka.PreOrders;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.BackgroundConsumer;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.OrderEvents;
-using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders;
+using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders.DTO;
 using Ozon.Route256.Five.OrderService.Kafka.Producers;
 using Ozon.Route256.Five.OrderService.Kafka.Producers.NewOrder;
 using Ozon.Route256.Five.OrderService.Kafka.Settings;
@@ -17,24 +17,24 @@ public static partial class ServiceCollectionExtensions
     {
         var kafkaSettings = configuration.GetSection("Kafka").Get<KafkaSettings>();
 
-        services.AddConsumer<string, PreOrderDto, PreOrdersConsumerHandler>(
+        services.AddConsumer<string, PreOrderRequest, PreOrdersConsumerHandler>(
             configuration,
-            ConsumerType.PreOrder,
+            ConsumerType.PreOrderConsumer,
             kafkaSettings,
             Deserializers.Utf8,
-            new KafkaJsonSerializer<PreOrderDto>());
+            new KafkaJsonSerializer<PreOrderRequest>());
 
-        services.AddConsumer<string, OrderEventDTO, OrderEventsConsumerHandler>(
+        services.AddConsumer<string, OrderEventRequest, OrderEventsConsumerHandler>(
            configuration,
-           ConsumerType.OrderEvents,
+           ConsumerType.OrderEventsConsumer,
            kafkaSettings,
            Deserializers.Utf8,
-           new KafkaJsonSerializer<OrderEventDTO>());
+           new KafkaJsonSerializer<OrderEventRequest>());
 
         services.AddProducer(configuration, kafkaSettings);
 
         services.Configure<OrderEventSettings>(configuration.GetSection(OrderEventSettings.Sections));
-        services.AddTransient<INewOrderKafkaPublisher, NewOrderKafkaPublisher>();
+        services.AddTransient<INewOrderKafkaProducer, NewOrderKafkaProducer>();
 
         return services;
     }

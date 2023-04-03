@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Ozon.Route256.Five.OrderService.Kafka.Producers.NewOrder;
 
-public class NewOrderKafkaPublisher : INewOrderKafkaPublisher
+public class NewOrderKafkaProducer : INewOrderKafkaProducer
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
@@ -14,18 +14,18 @@ public class NewOrderKafkaPublisher : INewOrderKafkaPublisher
     private readonly IKafkaProducer _kafkaProducer;
     private readonly OrderEventSettings _orderEventSettings;
 
-    public NewOrderKafkaPublisher(IKafkaProducer kafkaProducer, IOptionsSnapshot<OrderEventSettings> optionsSnapshot)
+    public NewOrderKafkaProducer(IKafkaProducer kafkaProducer, IOptionsSnapshot<OrderEventSettings> optionsSnapshot)
     {
         _kafkaProducer = kafkaProducer;
         _orderEventSettings = optionsSnapshot.Value;
     }
 
-    public Task PublishToKafka(NewOrderDTO dto, CancellationToken token)
+    public Task PublishToKafka(NewOrderRequest request, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(_orderEventSettings.Topic))
-            throw new Exception($"Topic for {nameof(NewOrderKafkaPublisher)} is empty");
+            throw new Exception($"Topic for {nameof(NewOrderKafkaProducer)} is empty");
 
-        var value = JsonSerializer.Serialize(dto, JsonSerializerOptions);
-        return _kafkaProducer.SendMessage(dto.OrderId.ToString(), value, _orderEventSettings.Topic, token);
+        var value = JsonSerializer.Serialize(request, JsonSerializerOptions);
+        return _kafkaProducer.SendMessage(request.OrderId.ToString(), value, _orderEventSettings.Topic, token);
     }
 }

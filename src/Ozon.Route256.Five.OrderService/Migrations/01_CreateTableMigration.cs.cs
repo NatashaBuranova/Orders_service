@@ -10,7 +10,7 @@ public class CreateTableMigration : Migration
         Create.Table("region")
             .WithColumn("id").AsInt64().PrimaryKey().Identity()
             .WithColumn("name").AsString().NotNullable()
-            .WithColumn("stockcoordinate").AsCustom("point").NotNullable();
+            .WithColumn("stock_coordinate").AsCustom("point").NotNullable();
 
         Create.Table("customer")
             .WithColumn("id").AsInt32().PrimaryKey()

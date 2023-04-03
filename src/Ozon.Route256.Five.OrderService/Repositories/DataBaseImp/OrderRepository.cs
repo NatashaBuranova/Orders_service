@@ -27,8 +27,8 @@ SELECT
     customer.phone_number {nameof(Models.Client.Telephone)},
     region.id {nameof(Region.Id)},
     region.name {nameof(Region.Name)},
-    region.stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    region.stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    region.stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    region.stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM ""order"" 
 INNER JOIN customer ON ""order"".customer_id = customer.id
 INNER JOIN region ON ""order"".region_id = region.id
@@ -92,8 +92,8 @@ SELECT
     customer.phone_number {nameof(Models.Client.Telephone)},
     region.id {nameof(Region.Id)},
     region.name {nameof(Region.Name)},
-    region.stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    region.stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    region.stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    region.stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM ""order"" 
 INNER JOIN customer ON ""order"".customer_id = customer.id
 INNER JOIN region ON ""order"".region_id = region.id
@@ -119,8 +119,8 @@ SELECT
     customer.phone_number {nameof(Models.Client.Telephone)},
     region.id {nameof(Region.Id)},
     region.name {nameof(Region.Name)},
-    region.stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    region.stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    region.stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    region.stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM ""order"" 
 INNER JOIN customer ON ""order"".customer_id = customer.id
 INNER JOIN region ON ""order"".region_id = region.id
@@ -145,8 +145,8 @@ SELECT
     customer.phone_number {nameof(Models.Client.Telephone)},
     region.id {nameof(Region.Id)},
     region.name {nameof(Region.Name)},
-    region.stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    region.stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    region.stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    region.stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM ""order"" 
 INNER JOIN customer ON ""order"".customer_id = customer.id
 INNER JOIN region ON ""order"".region_id = region.id
@@ -173,8 +173,8 @@ SELECT
     customer.phone_number {nameof(Models.Client.Telephone)},
     region.id {nameof(Region.Id)},
     region.name {nameof(Region.Name)},
-    region.stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    region.stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    region.stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    region.stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM ""order"" 
 INNER JOIN customer ON ""order"".customer_id = customer.id
 INNER JOIN region ON ""order"".region_id = region.id

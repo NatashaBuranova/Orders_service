@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
         IDeserializer<TKey> keyDeserializer,
         IDeserializer<TMessage> valueDeserializer) where THandler : class, IKafkaConsumerHandler<TKey, TMessage>
     {
-        var consumerSettings = configuration.GetSection($"Kafka:Consumer:{consumerType.Name}")
+        var consumerSettings = configuration.GetSection($"Kafka:Consumer:{consumerType}")
             .Get<ConsumerSettings>();
 
         if (!consumerSettings.Enabled)
