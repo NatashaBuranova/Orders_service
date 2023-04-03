@@ -19,14 +19,14 @@ public static partial class ServiceCollectionExtensions
 
         services.AddConsumer<string, PreOrderRequest, PreOrdersConsumerHandler>(
             configuration,
-            ConsumerType.PreOrder,
+            ConsumerType.PreOrderConsumer,
             kafkaSettings,
             Deserializers.Utf8,
             new KafkaJsonSerializer<PreOrderRequest>());
 
         services.AddConsumer<string, OrderEventRequest, OrderEventsConsumerHandler>(
            configuration,
-           ConsumerType.OrderEvents,
+           ConsumerType.OrderEventsConsumer,
            kafkaSettings,
            Deserializers.Utf8,
            new KafkaJsonSerializer<OrderEventRequest>());
