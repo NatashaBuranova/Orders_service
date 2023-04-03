@@ -10,21 +10,24 @@ public class ShardConnectionFactory : IShardConnectionFactory
     private readonly IShardingRule<long> _longShardingRule;
     private readonly IShardingRule<string> _stringShardingRule;
     private readonly int _bucketsCount;
+    private readonly string _connectionString;
 
     public ShardConnectionFactory(IDbStore dbStore,
         IShardingRule<long> longShardingRule,
-        IShardingRule<string> stringShardingRule)
+        IShardingRule<string> stringShardingRule,
+        IConfiguration configuration)
     {
         _dbStore = dbStore;
         _longShardingRule = longShardingRule;
         _stringShardingRule = stringShardingRule;
         _bucketsCount = _dbStore.BucketsCount;
+        _connectionString = configuration.GetSection("DataBase:ConnectionString").Get<string>();
     }
 
     public async Task<string> GetConnectionStringAsync(int bucketId)
     {
         var result = await _dbStore.GetEndpointByBucketAsync(bucketId);
-        return $"Server={result.HostAndPort};Database=orders_db;User Id=admin;Password=admin;";
+        return $"Server={result.HostAndPort};{_connectionString}";
     }
 
     public async Task<DbConnection> GetConnectionByKeyAsync(
