@@ -71,7 +71,7 @@ public class BackgroundKafkaConsumer<TKey, TMessage, THandler> : BackgroundServi
             var consumed = consumer.Consume(token);
             await _serviceProvider.CreateScope().ServiceProvider.
                 GetRequiredService<THandler>()
-                .Handle(consumed.Message.Key, consumed.Message.Value, token);
+                .HandleAsync(consumed.Message.Key, consumed.Message.Value, token);
             consumer.Commit();
         }
     }

@@ -6,9 +6,9 @@ namespace Ozon.Route256.Five.OrderService.Services;
 
 public class SendNewOrder : ISendNewOrder
 {
-    private readonly INewOrderKafkaPublisher _newOrderKafkaPublisher;
+    private readonly INewOrderKafkaProducer _newOrderKafkaPublisher;
 
-    public SendNewOrder(INewOrderKafkaPublisher newOrderKafkaPublisher)
+    public SendNewOrder(INewOrderKafkaProducer newOrderKafkaPublisher)
     {
         _newOrderKafkaPublisher = newOrderKafkaPublisher;
     }
@@ -17,14 +17,14 @@ public class SendNewOrder : ISendNewOrder
     public async Task SendValidOrder(Order order, CancellationToken token)
     {
         if (IsOrderValid(order))
-            await _newOrderKafkaPublisher.PublishToKafka(new NewOrderDTO(order.Id), token);
+            await _newOrderKafkaPublisher.PublishToKafka(new NewOrderRequest(order.Id), token);
     }
 
     private static bool IsOrderValid(Order order)
     {
         if (order.DeliveryAddress == null || order.Region == null) return false;
 
-        var distance = DistanceCalculator.CalculateDistance(new Point(order.DeliveryAddress.Latitude, order.DeliveryAddress.Latitude),
+        var distance = DistanceCalculator.CalculateDistance(new Point(order.DeliveryAddress.Latitude, order.DeliveryAddress.Longitude),
             new Point(order.Region.StockLatitude, order.Region.StockLongitude));
 
         if (distance > 5) return false;

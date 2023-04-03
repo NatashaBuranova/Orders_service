@@ -4,13 +4,13 @@ public static class DistanceCalculator
 {
     private const double EarthRadiusKm = 6371;
 
-    public static double CalculateDistance(Point point1, Point city2)
+    public static double CalculateDistance(Point point1, Point point2)
     {
-        var dLat = DegreesToRadians(city2.Latitude - point1.Latitude);
-        var dLon = DegreesToRadians(city2.Longitude - point1.Longitude);
+        var dLat = DegreesToRadians(point2.Latitude - point1.Latitude);
+        var dLon = DegreesToRadians(point2.Longitude - point1.Longitude);
 
         var lat1 = DegreesToRadians(point1.Latitude);
-        var lat2 = DegreesToRadians(city2.Latitude);
+        var lat2 = DegreesToRadians(point2.Latitude);
 
         var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
                 Math.Sin(dLon / 2) * Math.Sin(dLon / 2) * Math.Cos(lat1) * Math.Cos(lat2);

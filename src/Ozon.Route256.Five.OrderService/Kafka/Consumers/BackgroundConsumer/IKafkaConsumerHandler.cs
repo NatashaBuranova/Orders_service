@@ -2,5 +2,5 @@
 
 public interface IKafkaConsumerHandler<in TKey, in TValue>
 {
-    public Task Handle(TKey key, TValue message, CancellationToken token);
+    public Task HandleAsync(TKey key, TValue message, CancellationToken token);
 }
