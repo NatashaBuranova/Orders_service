@@ -10,16 +10,16 @@ public class RegionRepository : IRegionRepository
 SELECT 
     id {nameof(Region.Id)}, 
     name {nameof(Region.Name)}, 
-    stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM region";
 
     private readonly string _getByNameQuery = $@"
 SELECT 
     id {nameof(Region.Id)}, 
     name {nameof(Region.Name)}, 
-    stockcoordinate[0] {nameof(Region.StockLatitude)}, 
-    stockcoordinate[1] {nameof(Region.StockLongitude)} 
+    stock_coordinate[0] {nameof(Region.StockLatitude)}, 
+    stock_coordinate[1] {nameof(Region.StockLongitude)} 
 FROM region where LOWER(name) = LOWER(@regionName)";
 
     private readonly string _IsExistQuery = @"SELECT EXISTS (SELECT * FROM region where id = @regionId)";

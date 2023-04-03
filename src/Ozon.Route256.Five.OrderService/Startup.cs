@@ -32,7 +32,7 @@ public class Startup
         services.AddFluentMigratorCore()
             .ConfigureRunner(builder => builder
                 .AddPostgres()
-                .WithGlobalConnectionString("Server=localhost;Port=5433;Database=orders_db;User Id=admin;Password=admin;")
+                .WithGlobalConnectionString(_configuration.GetValue<string>("DataBase:ConnectionString"))
                 .WithMigrationsIn(typeof(CreateTableMigration).Assembly)
             );
 
