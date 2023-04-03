@@ -1,6 +1,6 @@
 ﻿using Ozon.Route256.Five.OrderService.DateTimeProvider;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.BackgroundConsumer;
-using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders;
+using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders.DTO;
 using Ozon.Route256.Five.OrderService.Models;
 using Ozon.Route256.Five.OrderService.Models.Enums;
 using Ozon.Route256.Five.OrderService.Repositories;
@@ -8,7 +8,7 @@ using Ozon.Route256.Five.OrderService.Services;
 
 namespace Ozon.Route256.Five.OrderService.Consumers.Kafka.PreOrders;
 
-public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDto>
+public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderRequest>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IClientRepository _clientRepository;
@@ -32,7 +32,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
         _clientRepository = clientRepository;
     }
 
-    public async Task Handle(string key, PreOrderDto message, CancellationToken token)
+    public async Task HandleAsync(string key, PreOrderRequest message, CancellationToken token)
     {
         var newOrder = await GetNewOrderFromMessageAsync(message, token);
         var client = await GetClientAsync(message.Customer.Id, token);
@@ -43,11 +43,12 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
         await _sendNewOrder.SendValidOrder(newOrder, token);
     }
 
-    private async Task<Order> GetNewOrderFromMessageAsync(PreOrderDto message, CancellationToken token)
+    private async Task<Order> GetNewOrderFromMessageAsync(PreOrderRequest message, CancellationToken token)
     {
         var region = await _regionRepository.FindAsync(message.Customer.Address.Region, token);
 
-        if (region == null) throw new Exception($"For customer with id={message.Customer.Id} not found region {message.Customer.Address.Region}");
+        if (region == null)
+            throw new Exception($"For customer with id={message.Customer.Id} not found region {message.Customer.Address.Region}");
 
         return new Order()
         {
@@ -80,9 +81,9 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderDt
         return new Models.Client()
         {
             Id = client.Id,
-            FirstName = client.FirstName ?? "",
-            LastName = client.LastName ?? "",
-            Telephone = client.Telephone ?? ""
+            FirstName = client.FirstName ?? string.Empty,
+            LastName = client.LastName ?? string.Empty,
+            Telephone = client.Telephone ?? string.Empty
         };
     }
 
