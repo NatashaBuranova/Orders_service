@@ -56,6 +56,19 @@ public class OrderInMemoryRepository : IOrderRepository
         return Task.FromResult(_orders.ContainsKey(orderId));
     }
 
+    public Task InsertAsync(Order newOrder, CancellationToken token)
+    {
+        if (token.IsCancellationRequested)
+            return Task.FromCanceled(token);
+
+        if (_orders.ContainsKey(newOrder.Id))
+            throw new Exception($"Order with id {newOrder.Id} already exists");
+
+        _orders[newOrder.Id] = newOrder;
+
+        return Task.CompletedTask;
+    }
+
     public Task UpdateAsync(Order order, CancellationToken token)
     {
         if (token.IsCancellationRequested)

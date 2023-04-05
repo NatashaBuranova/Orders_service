@@ -1,7 +1,9 @@
 ﻿using Grpc.Net.ClientFactory;
 using Ozon.Route256.Five.OrderService.ClientBalancing;
+using Ozon.Route256.Five.OrderService.DateTimeProvider;
 using Ozon.Route256.Five.OrderService.GrpsServices;
 using Ozon.Route256.Five.OrderService.Helpers;
+using Ozon.Route256.Five.OrderService.Kafka;
 using Ozon.Route256.Five.OrderService.Midlewares;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Repositories.ImMemoryImp;
@@ -12,6 +14,14 @@ namespace Ozon.Route256.Five.OrderService;
 
 public class Startup
 {
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
@@ -21,6 +31,7 @@ public class Startup
         services.AddGrpc(options => { options.Interceptors.Add<LoggerInterceptor>(); });
         services.AddGrpcReflection();
 
+        services.AddSingleton<IDateTimeProvider, LocalDateTimeProvider>();
         services.AddSingleton<IDbStore, DbStore>();
         services.AddHostedService<SdConsumerHostedService>();
         services.AddGrpcClient<SdService.SdServiceClient>(
@@ -52,9 +63,18 @@ public class Startup
 
         services.AddScoped<IOrderRepository, OrderInMemoryRepository>();
         services.AddScoped<IRegionRepository, RegionInMemoryRepository>();
+        services.AddScoped<IClientRepository, ClientInMemoryRepository>();
 
         services.AddTransient<ICancelOrderServices, CancelOrderServices>();
         services.AddTransient<IGetClientServices, GetClientServices>();
+        services.AddTransient<ISendNewOrder, SendNewOrder>();
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = _configuration.GetValue<string>("Redis:ConnectionString");
+        });
+
+        services.AddKafka(_configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

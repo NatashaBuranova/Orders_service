@@ -1,7 +1,6 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Ozon.Route256.Five.OrderService.Repositories;
-using Ozon.Route256.Five.OrderService.Services;
 
 namespace Ozon.Route256.Five.OrderService.GrpsServices;
 
@@ -9,7 +8,7 @@ public class OrdersService : Orders.OrdersBase
 {
     private readonly IOrderRepository _orderRepository;
 
-    public OrdersService(IOrderRepository orderRepository, IGetClientServices clientServices)
+    public OrdersService(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }

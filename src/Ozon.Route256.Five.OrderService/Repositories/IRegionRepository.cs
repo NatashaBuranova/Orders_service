@@ -13,4 +13,9 @@ public interface IRegionRepository
     ///  Проверка на существование региона
     /// </summary>
     Task<bool> IsExistsAsync(long regionId, CancellationToken token);
+
+    /// <summary>
+    ///  Получение региона по названию
+    /// </summary>
+    Task<Region?> FindAsync(string regionName, CancellationToken token);
 }
