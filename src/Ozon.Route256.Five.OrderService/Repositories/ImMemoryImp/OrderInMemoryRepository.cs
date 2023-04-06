@@ -48,14 +48,6 @@ public class OrderInMemoryRepository : IOrderRepository
         return Task.FromResult(result);
     }
 
-    public Task<bool> IsExistsAsync(long orderId, CancellationToken token)
-    {
-        if (token.IsCancellationRequested)
-            return Task.FromCanceled<bool>(token);
-
-        return Task.FromResult(_orders.ContainsKey(orderId));
-    }
-
     public Task InsertAsync(Order newOrder, CancellationToken token)
     {
         if (token.IsCancellationRequested)

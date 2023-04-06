@@ -21,11 +21,6 @@ public interface IOrderRepository
     Task UpdateAsync(Order order, CancellationToken token);
 
     /// <summary>
-    ///  Проверка на существование заказа
-    /// </summary>
-    Task<bool> IsExistsAsync(long orderId, CancellationToken token);
-
-    /// <summary>
     ///  Постраничное получение заказов с фильтрацией по регионам и типу заказа
     /// </summary>
     Task<Order[]> GetOrdersListWithFiltersByPageAsync(OrdersListWithFiltersRequest filters, CancellationToken token);
