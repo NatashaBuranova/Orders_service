@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Five.OrderService.Web", "src\Ozon.Route256.Five.OrderService\Ozon.Route256.Five.OrderService.Web.csproj", "{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Five.OrderService.Web", "src\Ozon.Route256.Five.OrderService.Web\Ozon.Route256.Five.OrderService.Web.csproj", "{55DBEB4F-DD3B-412D-A559-8A0DF8BC5033}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{0110F962-814E-42EC-A715-C770D5137BA8}"
 	ProjectSection(SolutionItems) = preProject

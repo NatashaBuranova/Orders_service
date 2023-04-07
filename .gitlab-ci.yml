@@ -6,8 +6,8 @@ build:
   image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: []
   script:
-    - dotnet restore src/Ozon.Route256.Five.OrderService/Ozon.Route256.Five.OrderService.csproj
-    - dotnet build src/Ozon.Route256.Five.OrderService/Ozon.Route256.Five.OrderService.csproj --no-restore
+    - dotnet restore src/Ozon.Route256.Five.OrderService/Ozon.Route256.Five.OrderService.Web.csproj
+    - dotnet build src/Ozon.Route256.Five.OrderService/Ozon.Route256.Five.OrderService.Web.csproj --no-restore
 
 test:
   stage: build order-service
