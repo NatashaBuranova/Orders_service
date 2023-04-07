@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Moq;
-using Ozon.Route256.Five.OrderService.Kafka.Producers;
+using Ozon.Route256.Five.OrderService.Infrastructure.Kafka.Producers;
 using Ozon.Route256.Five.OrderService.Kafka.Producers.NewOrder;
 
 namespace Ozon.Route256.Five.OrderService.Tests.KafkaTest;
@@ -13,7 +13,7 @@ public class NewOrderKafkaProducerTests
     public NewOrderKafkaProducerTests()
     {
         _kafkaProducerMock = new Mock<IKafkaProducer>();
-        _optionsSnapshotMock = new Mock<IOptionsSnapshot<OrderEventSettings>>();       
+        _optionsSnapshotMock = new Mock<IOptionsSnapshot<OrderEventSettings>>();
     }
 
     [Fact]

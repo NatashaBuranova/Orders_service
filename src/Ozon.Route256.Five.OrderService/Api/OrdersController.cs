@@ -39,7 +39,7 @@ public class OrdersController : BaseController
         if (order == null)
             return NotFound($"Order with id: {id} not found");
 
-        if (_validateOrderServices.IsCanCancelOrder(order.State))
+        if (!_validateOrderServices.IsCanCancelOrder(order.State))
             return BadRequest($"Cannot cancel order with id:{id} in state {order.State}");
 
         await _cancelOrderServices.CancelOrderInLogisticsSimulator(id, token);

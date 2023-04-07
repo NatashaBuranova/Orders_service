@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Ozon.Route256.Five.OrderService.Models;
+using Ozon.Route256.Five.OrderService.Core.Models;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Web.Api;
 using Ozon.Route256.Five.OrderService.Web.Api.DTO.Regions;

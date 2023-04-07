@@ -17,8 +17,8 @@ public class DbStoreTests
         //Arrange
         var dbEndpoints = new[]
             {
-            new DbEndpoint("testHost1", DbReplicaType.Master),
-            new DbEndpoint("testHost2", DbReplicaType.Master),
+            new DbEndpoint("testHost1", DbReplicaType.Master, new int[]{4}),
+            new DbEndpoint("testHost2", DbReplicaType.Master, new int[]{4}),
             };
         await _dbStore.UpdateEndpointsAsync(dbEndpoints);
 

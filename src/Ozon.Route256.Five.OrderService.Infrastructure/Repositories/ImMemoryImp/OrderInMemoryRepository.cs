@@ -37,6 +37,7 @@ public class OrderInMemoryRepository : IOrderRepository
     {
         if (token.IsCancellationRequested)
             return Task.FromCanceled(token);
+
         _orders[order.Id] = order;
 
         return Task.CompletedTask;
@@ -63,7 +64,8 @@ public class OrderInMemoryRepository : IOrderRepository
         if (token.IsCancellationRequested)
             return Task.FromCanceled<Order[]>(token);
 
-        var orders = _orders.Values.Where(x => x.DateCreate >= filters.StartPeriod && x.ClientId == filters.ClientId).ToArray();
+        var orders = _orders.Values.Where(x => x.DateCreate >= filters.StartPeriod)
+                                   .Where(x => x.ClientId == filters.ClientId);
 
         var skip = filters.PageSize * (filters.CurrentPage - 1);
 
