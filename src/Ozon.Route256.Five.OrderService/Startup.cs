@@ -40,8 +40,7 @@ public class Startup
         services.AddServiceDiscovery(
             options =>
             {
-                //options.Address = new Uri("http://localhost:5081");
-                options.Address = new Uri("http://localhost:5000");
+                options.Address = new Uri("http://localhost:5081");
                 options.InterceptorRegistrations.Add(
                     new InterceptorRegistration(
                         InterceptorScope.Client,
