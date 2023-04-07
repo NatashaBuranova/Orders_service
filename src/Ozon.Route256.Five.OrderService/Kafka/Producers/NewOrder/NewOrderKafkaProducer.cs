@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Ozon.Route256.Five.OrderService.Infrastructure.Kafka.Producers;
 
 namespace Ozon.Route256.Five.OrderService.Kafka.Producers.NewOrder;
 

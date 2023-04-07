@@ -1,4 +1,4 @@
-﻿using Ozon.Route256.Five.OrderService.Models.Enums;
+﻿using Ozon.Route256.Five.OrderService.Core.Models.Enums;
 
 namespace Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders.DTO;
 

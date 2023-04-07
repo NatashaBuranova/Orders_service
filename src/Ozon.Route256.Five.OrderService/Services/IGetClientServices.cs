@@ -1,4 +1,4 @@
-﻿using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
+﻿using Ozon.Route256.Five.OrderService.Web.Api.DTO.Clients;
 
 namespace Ozon.Route256.Five.OrderService.Services;
 

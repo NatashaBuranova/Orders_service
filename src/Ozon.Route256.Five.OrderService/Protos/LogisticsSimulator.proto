@@ -1,5 +1,5 @@
 syntax = "proto3";
-option csharp_namespace = "Ozon.Route256.Five.OrderService.LogisticsSimulatorService";
+option csharp_namespace = "Ozon.Route256.Five.OrderService.LogisticsSimulatorGrpsService";
 
 import "google/protobuf/wrappers.proto";
 

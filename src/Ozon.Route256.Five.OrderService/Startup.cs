@@ -1,17 +1,17 @@
-﻿using Dapper;
-using Grpc.Net.ClientFactory;
-using Ozon.Route256.Five.OrderService.ClientBalancing;
+﻿using Grpc.Net.ClientFactory;
+using Ozon.Route256.Five.OrderService.Core.Services;
+using Ozon.Route256.Five.OrderService.CustomersGrpsServise;
 using Ozon.Route256.Five.OrderService.DateTimeProvider;
 using Ozon.Route256.Five.OrderService.GrpsServices;
 using Ozon.Route256.Five.OrderService.Helpers;
 using Ozon.Route256.Five.OrderService.Infrastructure;
+using Ozon.Route256.Five.OrderService.Infrastructure.ClientBalancing;
+using Ozon.Route256.Five.OrderService.Infrastructure.DataBaseConnection;
+using Ozon.Route256.Five.OrderService.Infrastructure.Repositories;
 using Ozon.Route256.Five.OrderService.Kafka;
+using Ozon.Route256.Five.OrderService.LogisticsSimulatorGrpsService;
 using Ozon.Route256.Five.OrderService.Midlewares;
-using Ozon.Route256.Five.OrderService.Repositories;
-using Ozon.Route256.Five.OrderService.Repositories.DataBaseImp;
-using Ozon.Route256.Five.OrderService.Repositories.ShardImp;
 using Ozon.Route256.Five.OrderService.Services;
-using InterceptorRegistration = Grpc.Net.ClientFactory.InterceptorRegistration;
 
 namespace Ozon.Route256.Five.OrderService;
 
@@ -27,7 +27,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        SqlMapper.AddTypeHandler(AddressObjectHandler.Instance);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -37,12 +36,12 @@ public class Startup
         services.AddGrpcReflection();
 
         services.AddSingleton<IDateTimeProvider, LocalDateTimeProvider>();
-        services.AddSingleton<IDbStore, DbStore>();
-        services.AddHostedService<SdConsumerHostedService>();
-        services.AddGrpcClient<SdService.SdServiceClient>(
+
+        services.AddServiceDiscovery(
             options =>
             {
-                options.Address = new Uri("http://localhost:5081");
+                //options.Address = new Uri("http://localhost:5081");
+                options.Address = new Uri("http://localhost:5000");
                 options.InterceptorRegistrations.Add(
                     new InterceptorRegistration(
                         InterceptorScope.Client,
@@ -54,31 +53,26 @@ public class Startup
                         }));
             });
 
-        services.AddGrpcClient<LogisticsSimulatorService.LogisticsSimulatorService.LogisticsSimulatorServiceClient>(
+        services.AddGrpcClient<LogisticsSimulatorService.LogisticsSimulatorServiceClient>(
             options =>
             {
                 options.Address = new Uri("http://localhost:5080");
             });
 
-        services.AddGrpcClient<Customers.Customers.CustomersClient>(
+        services.AddGrpcClient<Customers.CustomersClient>(
             options =>
             {
                 options.Address = new Uri("http://localhost:5004");
             });
 
-        services.AddScoped<IShardingRule<long>, RoundRobinLongShardingRule>();
-        services.AddScoped<IShardingRule<string>, RoundRobinStringShardingRule>();
-        services.AddScoped<IShardConnectionFactory, ShardConnectionFactory>();
-
-        services.AddScoped<IOrderRepository, OrderShardRepository>();
-        services.AddScoped<IRegionRepository, RegionShardRepository>();
-        services.AddScoped<IClientRepository, ClientShardRepository>();
-
-        services.AddScoped<IPostgresConnectionFactory, PostgresConnectionFactory>();
+        services.AddDataBaseConnection();
+        services.AddRepositories();
 
         services.AddTransient<ICancelOrderServices, CancelOrderServices>();
         services.AddTransient<IGetClientServices, GetClientServices>();
         services.AddTransient<ISendNewOrder, SendNewOrder>();
+
+        services.AddTransient<IValidateOrderServices, ValidateOrderServices>();
 
         services.AddStackExchangeRedisCache(options =>
         {

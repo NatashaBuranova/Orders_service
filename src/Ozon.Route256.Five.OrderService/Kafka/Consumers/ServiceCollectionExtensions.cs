@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
-using Ozon.Route256.Five.OrderService.Kafka.Consumers.BackgroundConsumer;
-using Ozon.Route256.Five.OrderService.Kafka.Settings;
+using Ozon.Route256.Five.OrderService.Infrastructure.Kafka.Consumers.BackgroundConsumer;
+using Ozon.Route256.Five.OrderService.Infrastructure.Kafka.Settings;
 
 namespace Ozon.Route256.Five.OrderService.Consumers.Kafka.Consumers;
 

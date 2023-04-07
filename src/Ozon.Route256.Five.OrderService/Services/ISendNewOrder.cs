@@ -1,4 +1,4 @@
-﻿using Ozon.Route256.Five.OrderService.Models;
+﻿using Ozon.Route256.Five.OrderService.Core.Models;
 
 namespace Ozon.Route256.Five.OrderService.Services;
 

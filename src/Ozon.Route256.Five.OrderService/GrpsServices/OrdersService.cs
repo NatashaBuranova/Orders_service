@@ -1,6 +1,10 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Ozon.Route256.Five.OrderService.Core.Models;
+using Ozon.Route256.Five.OrderService.OrdersGrpsService;
 using Ozon.Route256.Five.OrderService.Repositories;
+using Address = Ozon.Route256.Five.OrderService.OrdersGrpsService.Address;
+using Client = Ozon.Route256.Five.OrderService.OrdersGrpsService.Client;
 
 namespace Ozon.Route256.Five.OrderService.GrpsServices;
 
@@ -20,25 +24,17 @@ public class OrdersService : Orders.OrdersBase
         if (order == null)
             throw new RpcException(new Status(StatusCode.NotFound, $"Order {request.Id} not found"));
 
+        return GetOrderByIdResponse(order);
+    }
+
+    private OrderByIdResponse GetOrderByIdResponse(Order order)
+    {
         return new OrderByIdResponse()
         {
             Id = order.Id,
             DateCreate = order.DateCreate.ToTimestamp(),
-            DeliveryAddress = new Address()
-            {
-                Region = order.DeliveryAddress?.Region,
-                Street = order.DeliveryAddress?.Street,
-                Apartment = order.DeliveryAddress?.Apartment,
-                City = order.DeliveryAddress?.City,
-                Building = order.DeliveryAddress?.Building,
-                Latitude = order.DeliveryAddress?.Latitude != null ? order.DeliveryAddress.Latitude : default,
-                Longitude = order.DeliveryAddress?.Longitude != null ? order.DeliveryAddress.Longitude : default
-            },
-            Client = new Client()
-            {
-                FirstName = order.Client?.FirstName,
-                LastName = order.Client?.LastName
-            },
+            DeliveryAddress = order.DeliveryAddress != null ? GetAddress(order.DeliveryAddress) : null,
+            Client = order.Client != null ? GetClient(order.Client) : null,
             CountProduct = order.CountProduct,
             Region = order.DeliveryAddress?.Region,
             Status = (int)order.State,
@@ -46,6 +42,29 @@ public class OrdersService : Orders.OrdersBase
             TotalSum = order.TotalSumm,
             TotalWeight = order.TotalWeight,
             Type = (int)order.Type
+        };
+    }
+
+    private static Address GetAddress(Core.Models.Address address)
+    {
+        return new Address()
+        {
+            Region = address.Region,
+            Street = address.Street,
+            Apartment = address.Apartment,
+            City = address.City,
+            Building = address.Building,
+            Latitude = address.Latitude,
+            Longitude = address.Longitude
+        };
+    }
+
+    private static Client GetClient(Core.Models.Client client)
+    {
+        return new Client()
+        {
+            FirstName = client.FirstName,
+            LastName = client.LastName
         };
     }
 }

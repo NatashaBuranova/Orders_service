@@ -1,8 +1,8 @@
-﻿using Ozon.Route256.Five.OrderService.DateTimeProvider;
-using Ozon.Route256.Five.OrderService.Kafka.Consumers.BackgroundConsumer;
+﻿using Ozon.Route256.Five.OrderService.Core.Models;
+using Ozon.Route256.Five.OrderService.Core.Models.Enums;
+using Ozon.Route256.Five.OrderService.DateTimeProvider;
+using Ozon.Route256.Five.OrderService.Infrastructure.Kafka.Consumers.BackgroundConsumer;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders.DTO;
-using Ozon.Route256.Five.OrderService.Models;
-using Ozon.Route256.Five.OrderService.Models.Enums;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Services;
 
@@ -50,6 +50,11 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderRe
         if (region == null)
             throw new Exception($"For customer with id={message.Customer.Id} not found region {message.Customer.Address.Region}");
 
+        return GetOrder(message, region.Id);
+    }
+
+    private Order GetOrder(PreOrderRequest message, long regionId)
+    {
         return new Order()
         {
             Id = message.Id,
@@ -58,27 +63,32 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderRe
             ClientId = message.Customer.Id,
             CountProduct = message.Goods.Count,
             State = OrderState.Created,
-            DeliveryAddress = new Models.Address()
-            {
-                Region = message.Customer.Address.Region,
-                Apartment = message.Customer.Address.Apartment,
-                Building = message.Customer.Address.Building,
-                City = message.Customer.Address.City,
-                Latitude = message.Customer.Address.Latitude,
-                Longitude = message.Customer.Address.Longitude,
-                Street = message.Customer.Address.Street,
-            },
+            DeliveryAddress = GetAddress(message.Customer.Address),
             TotalSumm = message.Goods.Select(x => x.Price).Sum(),
             TotalWeight = message.Goods.Select(x => x.Weight).Sum(),
-            RegionId = region.Id,
+            RegionId = regionId,
         };
     }
 
-    private async Task<Models.Client> GetClientAsync(int clientId, CancellationToken token)
+    private static Address GetAddress(PreOrderAddressRequest address)
+    {
+        return new Address()
+        {
+            Region = address.Region,
+            Apartment = address.Apartment,
+            Building = address.Building,
+            City = address.City,
+            Latitude = address.Latitude,
+            Longitude = address.Longitude,
+            Street = address.Street,
+        };
+    }
+
+    private async Task<Client> GetClientAsync(int clientId, CancellationToken token)
     {
         var client = await _clientServices.GetClientAsync(clientId, token);
 
-        return new Models.Client()
+        return new Client()
         {
             Id = client.Id,
             FirstName = client.FirstName ?? string.Empty,
@@ -87,7 +97,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderRe
         };
     }
 
-    private async Task AddClientAsync(Models.Client client, long regionId, CancellationToken token)
+    private async Task AddClientAsync(Client client, long regionId, CancellationToken token)
     {
         if (!await _clientRepository.IsExistsAsync(client.Id, token))
         {
