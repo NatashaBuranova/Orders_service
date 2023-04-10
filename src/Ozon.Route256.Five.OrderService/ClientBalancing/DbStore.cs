@@ -33,4 +33,17 @@ public class DbStore : IDbStore
 
         return Task.FromResult(endpoints[nextIndex]);
     }
+
+    public Task<DbEndpoint> GetEndpointByBucketAsync(int bucketId)
+    {
+        var result = _endpoints.FirstOrDefault(x => x.Buckets.Contains(bucketId));
+
+        if (result is null)
+            throw new ArgumentOutOfRangeException($"There is no endpoint for bucket {bucketId}");
+
+        return Task.FromResult(result);
+    }
+
+    public int BucketsCount => _endpoints.SelectMany(x => x.Buckets).Count();
+
 }

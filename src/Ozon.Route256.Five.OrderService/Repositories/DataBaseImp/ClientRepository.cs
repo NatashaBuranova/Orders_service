@@ -25,7 +25,7 @@ VALUES ( @{nameof(Models.Client.Id)},
         _connectionFactory = connectionFactory;
     }
 
-    public async Task InsertAsync(Models.Client newClient, CancellationToken token)
+    public async Task InsertAsync(Models.Client newClient, long regionId, CancellationToken token)
     {
         await using var connection = await _connectionFactory.GetConnectionAsync();
         await connection.ExecuteAsync(_insertQuery, newClient);

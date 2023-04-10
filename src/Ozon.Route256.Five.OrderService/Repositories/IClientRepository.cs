@@ -11,5 +11,5 @@ public interface IClientRepository
     /// <summary>
     ///  Создание клиента
     /// </summary>
-    public Task InsertAsync(Models.Client newClient, CancellationToken token);
+    public Task InsertAsync(Models.Client newClient, long regionId, CancellationToken token);
 }

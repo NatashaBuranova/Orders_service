@@ -15,6 +15,7 @@ public class RegionsController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetRegionsListAsync(CancellationToken token)
     {
+
         var regions = (await _regionRepository.GetAllAsync(token))
             .Select(x => new RegionResponse
             {

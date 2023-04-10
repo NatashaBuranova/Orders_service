@@ -37,7 +37,7 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderRe
         var newOrder = await GetNewOrderFromMessageAsync(message, token);
         var client = await GetClientAsync(message.Customer.Id, token);
 
-        await AddClientAsync(client, token);
+        await AddClientAsync(client, newOrder.RegionId, token);
         await _orderRepository.InsertAsync(newOrder, token);
 
         await _sendNewOrder.SendValidOrder(newOrder, token);
@@ -87,11 +87,11 @@ public class PreOrdersConsumerHandler : IKafkaConsumerHandler<string, PreOrderRe
         };
     }
 
-    private async Task AddClientAsync(Models.Client client, CancellationToken token)
+    private async Task AddClientAsync(Models.Client client, long regionId, CancellationToken token)
     {
         if (!await _clientRepository.IsExistsAsync(client.Id, token))
         {
-            await _clientRepository.InsertAsync(client, token);
+            await _clientRepository.InsertAsync(client, regionId, token);
         }
     }
 }

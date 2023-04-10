@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using FluentMigrator.Runner;
 using Grpc.Net.ClientFactory;
 using Ozon.Route256.Five.OrderService.ClientBalancing;
 using Ozon.Route256.Five.OrderService.DateTimeProvider;
@@ -8,10 +7,9 @@ using Ozon.Route256.Five.OrderService.Helpers;
 using Ozon.Route256.Five.OrderService.Infrastructure;
 using Ozon.Route256.Five.OrderService.Kafka;
 using Ozon.Route256.Five.OrderService.Midlewares;
-using Ozon.Route256.Five.OrderService.Migrations;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Repositories.DataBaseImp;
-using Ozon.Route256.Five.OrderService.Repositories.ImMemoryImp;
+using Ozon.Route256.Five.OrderService.Repositories.ShardImp;
 using Ozon.Route256.Five.OrderService.Services;
 using InterceptorRegistration = Grpc.Net.ClientFactory.InterceptorRegistration;
 
@@ -29,13 +27,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddFluentMigratorCore()
-            .ConfigureRunner(builder => builder
-                .AddPostgres()
-                .WithGlobalConnectionString(_configuration.GetValue<string>("DataBase:ConnectionString"))
-                .WithMigrationsIn(typeof(CreateTableMigration).Assembly)
-            );
-
         SqlMapper.AddTypeHandler(AddressObjectHandler.Instance);
 
         services.AddControllers();
@@ -75,9 +66,13 @@ public class Startup
                 options.Address = new Uri("http://localhost:5004");
             });
 
-        services.AddScoped<IOrderRepository, OrderRepository>();
-        services.AddScoped<IRegionRepository, RegionRepository>();
-        services.AddScoped<IClientRepository, ClientRepository>();
+        services.AddScoped<IShardingRule<long>, RoundRobinLongShardingRule>();
+        services.AddScoped<IShardingRule<string>, RoundRobinStringShardingRule>();
+        services.AddScoped<IShardConnectionFactory, ShardConnectionFactory>();
+
+        services.AddScoped<IOrderRepository, OrderShardRepository>();
+        services.AddScoped<IRegionRepository, RegionShardRepository>();
+        services.AddScoped<IClientRepository, ClientShardRepository>();
 
         services.AddScoped<IPostgresConnectionFactory, PostgresConnectionFactory>();
 

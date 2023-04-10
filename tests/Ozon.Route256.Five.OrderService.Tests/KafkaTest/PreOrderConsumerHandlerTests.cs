@@ -55,7 +55,7 @@ public class PreOrdersConsumerHandlerTests
 
         // Assert
         _orderRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Order>(), default), Times.Once);
-        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Models.Client>(), default), Times.Once);
+        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Models.Client>(), It.IsAny<long>(), default), Times.Once);
     }
 
     [Fact]
@@ -81,6 +81,6 @@ public class PreOrdersConsumerHandlerTests
 
         // Assert
         _orderRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Order>(), default), Times.Once);
-        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Models.Client>(), default), Times.Never);
+        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Models.Client>(), It.IsAny<long>(), default), Times.Never);
     }
 }
