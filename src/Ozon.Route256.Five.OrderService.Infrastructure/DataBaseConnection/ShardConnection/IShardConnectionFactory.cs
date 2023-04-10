@@ -7,6 +7,7 @@ public interface IShardConnectionFactory
     Task<DbConnection> GetConnectionByKeyAsync(
        long shardKey,
        CancellationToken token);
+
     Task<DbConnection> GetConnectionByKeyAsync(
         string shardKey,
         CancellationToken token);
