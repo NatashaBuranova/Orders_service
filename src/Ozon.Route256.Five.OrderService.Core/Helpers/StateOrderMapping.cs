@@ -4,29 +4,14 @@ namespace Ozon.Route256.Five.OrderService.Core.Helpers;
 
 public static class StateOrderMapping
 {
-    public static OrderState GetStateOrderFromName(string stateName)
-    {
-        OrderState state = OrderState.Cancelled;
-
-        switch (stateName)
+    public static OrderState GetStateOrderFromName(string stateName) =>
+        stateName switch
         {
-            case "Created":
-                state = OrderState.Created;
-                break;
-            case "SentToCustomer":
-                state = OrderState.SentToCustomer;
-                break;
-            case "Delivered":
-                state = OrderState.Delivered;
-                break;
-            case "Lost":
-                state = OrderState.Lost;
-                break;
-            case "Cancelled":
-                state = OrderState.Cancelled;
-                break;
-        }
-
-        return state;
-    }
+            "Created" => OrderState.Created,
+            "SentToCustomer" => OrderState.SentToCustomer,
+            "Delivered" => OrderState.Delivered,
+            "Lost" => OrderState.Lost,
+            "Cancelled" => OrderState.Cancelled,
+            _ => OrderState.Cancelled
+        };
 }

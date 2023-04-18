@@ -14,19 +14,22 @@ public class ValidateOrderServices : IValidateOrderServices
 
     public bool IsCanCancelOrder(OrderState state)
     {
-        if (ForbiddenToCancelStates.Contains(state)) return false;
+        if (ForbiddenToCancelStates.Contains(state))
+            return false;
 
         return true;
     }
 
     public bool IsOrderValid(Order order)
     {
-        if (order.DeliveryAddress == null || order.Region == null) return false;
+        if (order.DeliveryAddress == null || order.Region == null)
+            return false;
 
         var distance = DistanceCalculator.CalculateDistance(new Point(order.DeliveryAddress.Latitude, order.DeliveryAddress.Longitude),
             new Point(order.Region.StockLatitude, order.Region.StockLongitude));
 
-        if (distance > 5) return false;
+        if (distance > 5)
+            return false;
 
         return true;
     }
