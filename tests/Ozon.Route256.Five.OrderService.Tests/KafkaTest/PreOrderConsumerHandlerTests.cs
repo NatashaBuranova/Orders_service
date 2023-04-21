@@ -1,12 +1,12 @@
 ﻿using Moq;
 using Ozon.Route256.Five.OrderService.Consumers.Kafka.PreOrders;
-using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
+using Ozon.Route256.Five.OrderService.Core.Models;
+using Ozon.Route256.Five.OrderService.Core.Models.Enums;
 using Ozon.Route256.Five.OrderService.DateTimeProvider;
 using Ozon.Route256.Five.OrderService.Kafka.Consumers.PreOrders.DTO;
-using Ozon.Route256.Five.OrderService.Models;
-using Ozon.Route256.Five.OrderService.Models.Enums;
 using Ozon.Route256.Five.OrderService.Repositories;
 using Ozon.Route256.Five.OrderService.Services;
+using Ozon.Route256.Five.OrderService.Web.Api.DTO.Clients;
 
 namespace Ozon.Route256.Five.OrderService.Tests.KafkaTest;
 
@@ -55,7 +55,7 @@ public class PreOrdersConsumerHandlerTests
 
         // Assert
         _orderRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Order>(), default), Times.Once);
-        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Models.Client>(), It.IsAny<long>(), default), Times.Once);
+        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Client>(), It.IsAny<long>(), default), Times.Once);
     }
 
     [Fact]
@@ -81,6 +81,6 @@ public class PreOrdersConsumerHandlerTests
 
         // Assert
         _orderRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Order>(), default), Times.Once);
-        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Models.Client>(), It.IsAny<long>(), default), Times.Never);
+        _clientRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<Client>(), It.IsAny<long>(), default), Times.Never);
     }
 }

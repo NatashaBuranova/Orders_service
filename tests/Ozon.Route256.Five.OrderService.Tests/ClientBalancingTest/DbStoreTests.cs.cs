@@ -1,4 +1,4 @@
-using Ozon.Route256.Five.OrderService.ClientBalancing;
+using Ozon.Route256.Five.OrderService.Infrastructure.ClientBalancing;
 
 namespace OzonRoute256.Five.OrderService.Tests.ClientBalancingTest;
 

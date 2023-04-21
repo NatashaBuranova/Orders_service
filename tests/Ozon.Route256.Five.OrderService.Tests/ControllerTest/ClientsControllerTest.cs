@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Ozon.Route256.Five.OrderService.Controllers;
-using Ozon.Route256.Five.OrderService.Controllers.DTO.Clients;
 using Ozon.Route256.Five.OrderService.Services;
+using Ozon.Route256.Five.OrderService.Web.Api;
+using Ozon.Route256.Five.OrderService.Web.Api.DTO.Clients;
 
 namespace Ozon.Route256.Five.OrderService.Tests.Controllers;
 
